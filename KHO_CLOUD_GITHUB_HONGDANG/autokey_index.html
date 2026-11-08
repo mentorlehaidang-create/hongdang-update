@@ -1,0 +1,2731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>HD KEY</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg-dark: #070b14;
+    --bg-panel: #0e1626;
+    --gold-bright: #00e5ff;
+    --gold-mid: #38bdf8;
+    --gold-dim: #6366f1;
+    --amber-arc: #00e5ff;
+    --text-main: #ffffff;
+    --text-sub: #cbd5e1;
+  }
+  .skin-popover {
+    position: absolute;
+    top: 42px;
+    right: 20px;
+    width: 320px;
+    background: rgba(11, 15, 25, 0.97);
+    border: 1.5px solid var(--gold-bright);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 100;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.92), 0 0 22px rgba(0, 229, 255, 0.35);
+    display: none;
+  }
+  .skin-popover.open {
+    display: block;
+  }
+  .skin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    max-height: 210px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .skin-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(20, 29, 47, 0.85);
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .skin-item-btn:hover, .skin-item-btn.active {
+    border-color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .skin-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.65);
+  }
+  * {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+  }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    color: var(--text-main);
+  }
+  #viewport {
+    position: relative;
+    width: 820px;
+    height: 580px;
+    transform-origin: top left;
+    background:
+      radial-gradient(ellipse at 50% 48%, rgba(0, 229, 255, 0.08) 0%, transparent 62%),
+      radial-gradient(ellipse at 50% 25%, var(--bg-panel) 0%, var(--bg-dark) 75%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(56, 189, 248, 0.24);
+  }
+
+  /* Header Bar */
+  .header-bar {
+    position: relative;
+    height: 44px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #151e31 0%, #0b101d 100%);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    z-index: 2;
+  }
+  .brand-left span {
+    color: #ffffff !important;
+  }
+  .plugin-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 14px rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .plugin-title span {
+    color: #ffffff !important;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    z-index: 2;
+  }
+  .hdr-tool-btn {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 5px;
+    border: 1px solid #334155;
+    background: rgba(15, 23, 42, 0.88);
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.12s ease;
+  }
+  .hdr-tool-btn:hover {
+    border-color: var(--gold-bright);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.28);
+  }
+  .hdr-tool-btn.active {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.28) 0%, #0f172a 100%);
+    border: 1.5px solid var(--gold-bright);
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.32);
+  }
+  .resize-corner-grip {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 18px;
+    height: 18px;
+    cursor: nwse-resize;
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    opacity: 0.7;
+  }
+  .resize-corner-grip:hover {
+    opacity: 1;
+  }
+
+  /* Mode Tabs Row (Listen / Use File / Manual) */
+  .mode-tabs-row {
+    padding: 16px 26px 4px 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .mode-tab {
+    height: 44px;
+    border-radius: 7px;
+    background: rgba(15, 23, 42, 0.78);
+    border: 1px solid #293548;
+    color: #94a3b8;
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .mode-tab:hover {
+    border-color: var(--gold-bright);
+    color: #ffffff;
+  }
+  .mode-tab.active {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.28) 0%, #0f172a 100%);
+    border: 1.5px solid var(--gold-bright);
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 0 18px rgba(0, 229, 255, 0.32);
+  }
+
+  /* Main Detector Stage */
+  .detector-stage {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 34px;
+  }
+  /* Background Waveform Canvas spanning across behind knobs & center circle */
+  #waveCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .side-knob-wrap {
+    position: relative;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 150px;
+  }
+  .knob-label {
+    position: relative;
+    z-index: 30;
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: rgba(5, 8, 17, 0.90);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #000000;
+    text-transform: uppercase;
+  }
+  .knob-value {
+    position: relative;
+    z-index: 30;
+    display: inline-block;
+    min-width: 48px;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: rgba(5, 8, 17, 0.92);
+    border: 1px solid var(--gold-bright);
+    text-align: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #000000;
+  }
+  .knob-svg {
+    cursor: ns-resize;
+    filter: drop-shadow(0 0 12px var(--gold-bright)) drop-shadow(0 0 24px rgba(0, 229, 255, 0.32));
+  }
+  .knob-svg {
+    cursor: ns-resize;
+    overflow: visible;
+  }
+
+  /* Center Key Circle */
+  .center-key-circle {
+    position: relative;
+    z-index: 2;
+    width: 248px;
+    height: 248px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .center-key-readout {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .big-key-letter {
+    font-size: 84px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 24px rgba(0, 229, 255, 0.48);
+  }
+  .scale-sub-label {
+    margin-top: 22px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  }
+
+  /* Bottom Dropdown Row */
+  .dropdown-row {
+    height: 48px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .select-box {
+    color-scheme: dark;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #0e1626;
+    background-image: linear-gradient(45deg, transparent 50%, var(--gold-bright) 50%),
+                      linear-gradient(135deg, var(--gold-bright) 50%, transparent 50%),
+                      linear-gradient(180deg, #162238 0%, #0b1120 100%);
+    background-position: calc(100% - 16px) 50%, calc(100% - 10px) 50%, 0 0;
+    background-size: 6px 6px, 6px 6px, 100% 100%;
+    background-repeat: no-repeat;
+    color: #ffffff;
+    border: 1.5px solid #334155;
+    border-radius: 6px;
+    padding: 7px 32px 7px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+  }
+  .select-box option {
+    background-color: #0e1626;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 6px 10px;
+  }
+  .select-box:hover, .select-box:focus {
+    border-color: var(--gold-bright);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+  }
+
+  /* 6-Octave Piano Keyboard */
+  .piano-strip {
+    height: 86px;
+    padding: 4px 14px 10px 14px;
+    background: #050811;
+    border-top: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .piano-keys {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 2px;
+  }
+  .white-key {
+    flex: 1;
+    height: 100%;
+    border-radius: 2px 2px 4px 4px;
+    background: linear-gradient(180deg, #334155 0%, #475569 62%, #1e293b 100%);
+    border: 1px solid #090d16;
+    position: relative;
+    cursor: pointer;
+  }
+  .white-key.in-scale {
+    background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 56%, var(--gold-mid) 57%, var(--gold-bright) 100%);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.22);
+  }
+  .white-key.root-key {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 54%, var(--gold-dim) 55%, var(--gold-bright) 100%);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+  }
+  .black-key {
+    position: absolute;
+    top: 0;
+    width: 1.55%;
+    height: 60%;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 70%, #090d16 100%);
+    border: 1px solid #020617;
+    z-index: 3;
+    cursor: pointer;
+    transform: translateX(-50%);
+  }
+  .black-key.in-scale {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 62%, var(--gold-bright) 63%, var(--gold-dim) 100%);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+  }
+  .black-key.root-key {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 60%, #ffffff 61%, var(--gold-bright) 100%);
+  }
+  .tempo-sub-label {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+  }
+
+  /* ===================================================================== */
+  /* FULL GAME COSTUME ("TRANG PHỤC") SKIN TRANSFORMATION SYSTEM           */
+  /* ===================================================================== */
+  .stage-armor-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+  }
+  .costume-crest-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 340px;
+    height: 310px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 1. HELLO KITTY KAWAII PASTEL PINK STUDIO OUTFIT */
+  #viewport[data-skin="hellokitty"] {
+    background:
+      radial-gradient(circle at 20% 25%, rgba(255,255,255,0.55) 2px, transparent 3px) 0 0 / 28px 28px,
+      radial-gradient(circle at 75% 70%, rgba(255,105,180,0.22) 2.5px, transparent 3.5px) 0 0 / 28px 28px,
+      linear-gradient(180deg, #ffeef5 0%, #ffc6de 55%, #ffa6ca 100%) !important;
+    border: 3px solid #ff69b4 !important;
+  }
+  #viewport[data-skin="hellokitty"] .header-bar,
+  #viewport[data-skin="hellokitty"] .mode-tabs-row {
+    background: linear-gradient(180deg, #ff7eb9 0%, #ff529a 100%) !important;
+    border-color: #ffffff !important;
+  }
+  #viewport[data-skin="hellokitty"] .dropdown-row,
+  #viewport[data-skin="hellokitty"] .action-row {
+    background: rgba(255, 240, 246, 0.88) !important;
+    border-color: #ffb3d1 !important;
+  }
+  #viewport[data-skin="hellokitty"] .knob-label,
+  #viewport[data-skin="hellokitty"] .knob-value,
+  #viewport[data-skin="hellokitty"] .mode-tab,
+  #viewport[data-skin="hellokitty"] .hdr-tool-btn,
+  #viewport[data-skin="hellokitty"] .ak-select,
+  #viewport[data-skin="hellokitty"] .send-btn {
+    background: #ffffff !important;
+    color: #d61f69 !important;
+    border: 1.5px solid #ff69b4 !important;
+    text-shadow: none !important;
+    border-radius: 999px !important;
+  }
+  #viewport[data-skin="hellokitty"] .mode-tab.active,
+  #viewport[data-skin="hellokitty"] .hdr-tool-btn.active,
+  #viewport[data-skin="hellokitty"] .send-btn:hover {
+    background: linear-gradient(180deg, #ff69b4 0%, #ff1493 100%) !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+  #viewport[data-skin="hellokitty"] .piano-strip {
+    background: #ffd1e6 !important;
+    border-top: 2px solid #ff69b4 !important;
+  }
+  #viewport[data-skin="hellokitty"] .white-key {
+    background: linear-gradient(180deg, #ffffff 0%, #fff0f6 70%, #ffc2dc 100%) !important;
+  }
+  #viewport[data-skin="hellokitty"] .white-key.in-scale {
+    background: linear-gradient(180deg, #ffffff 0%, #ff9ec7 58%, #ff529a 100%) !important;
+  }
+  #viewport[data-skin="hellokitty"] .black-key {
+    background: linear-gradient(180deg, #ff69b4 0%, #d61f69 100%) !important;
+    border-color: #ffffff !important;
+  }
+
+  /* 2. NAKROTH THỨ NGUYÊN VỆ THẦN (ANIME MECHA CYBER HUD) */
+  #viewport[data-skin="nakroth"] {
+    background:
+      linear-gradient(90deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(0deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px) 0 0 / 24px 24px,
+      radial-gradient(ellipse at 50% 30%, #0d2247 0%, #050b18 75%) !important;
+    border: 2px solid #00f0ff !important;
+  }
+  #viewport[data-skin="nakroth"] .knob-label,
+  #viewport[data-skin="nakroth"] .knob-value,
+  #viewport[data-skin="nakroth"] .send-btn {
+    background: linear-gradient(135deg, #06152d 0%, #0f2942 100%) !important;
+    border: 1px solid #fde047 !important;
+    color: #00f0ff !important;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  }
+
+  /* 3. TULEN THẦN SỨ ST-L79 */
+  #viewport[data-skin="tulen"] {
+    background:
+      repeating-linear-gradient(45deg, rgba(251, 191, 36, 0.05) 0px, rgba(251, 191, 36, 0.05) 2px, transparent 2px, transparent 18px),
+      radial-gradient(ellipse at 50% 25%, #3b280a 0%, #171005 68%, #090602 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 4. LAURIEL THỨ NGUYÊN THÁNH NỮ */
+  #viewport[data-skin="lauriel"] {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(253, 224, 71, 0.16) 0%, transparent 48%),
+      radial-gradient(ellipse at 50% 45%, #33104f 0%, #160726 70%, #0a0312 100%) !important;
+    border: 2px solid #f0abfc !important;
+  }
+
+  /* 5. NGỘ KHÔNG TỀ THIÊN VÕ THÁNH */
+  #viewport[data-skin="wukong"] {
+    background:
+      radial-gradient(circle at 50% 85%, rgba(239, 68, 68, 0.24) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 25%, #3d1405 0%, #1c0802 70%, #0d0301 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 6. VIOLET HUYẾT MA THẦN */
+  #viewport[data-skin="violet_lq"] {
+    background:
+      repeating-linear-gradient(-45deg, rgba(255, 42, 95, 0.06) 0px, rgba(255, 42, 95, 0.06) 2px, transparent 2px, transparent 20px),
+      radial-gradient(ellipse at 50% 35%, #3b0714 0%, #170308 70%, #0a0103 100%) !important;
+    border: 2px solid #ff2a5f !important;
+  }
+
+  /* 7. MURAD SIÊU VIỆT VŨ TRỤ */
+  #viewport[data-skin="murad"] {
+    background:
+      radial-gradient(circle at 18% 30%, rgba(255,255,255,0.6) 1px, transparent 2px) 0 0 / 50px 50px,
+      radial-gradient(circle at 82% 65%, rgba(56,189,248,0.6) 1.5px, transparent 2.5px) 0 0 / 60px 60px,
+      radial-gradient(ellipse at 50% 40%, #1c1954 0%, #0b0926 70%, #040312 100%) !important;
+    border: 2px solid #818cf8 !important;
+  }
+
+  /* 8. TEL'ANNAS LƯỠNG NGHI LONG HẬU */
+  #viewport[data-skin="telannas"] {
+    background:
+      radial-gradient(circle at 50% 20%, rgba(253, 224, 71, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 40%, #09362e 0%, #041a16 72%, #020d0b 100%) !important;
+    border: 2px solid #10b981 !important;
+  }
+
+  /* 9. LILIANA NGUYỆT MỊ LY */
+  #viewport[data-skin="liliana"] {
+    background:
+      radial-gradient(circle at 50% 15%, rgba(244, 114, 182, 0.2) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 45%, #380e3b 0%, #19051c 72%, #0b020d 100%) !important;
+    border: 2px solid #f472b6 !important;
+  }
+
+  /* 10. FLORENTINO TINH HỆ KIẾM THÁNH */
+  #viewport[data-skin="florentino"] {
+    background:
+      radial-gradient(circle at 50% 25%, rgba(251, 191, 36, 0.16) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 45%, #27104a 0%, #110624 72%, #070212 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 11. RAZ BĂNG QUYỀN QUÁN QUÂN */
+  #viewport[data-skin="raz"] {
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 35%, #0f3156 0%, #07192e 72%, #030b17 100%) !important;
+    border: 2px solid #7dd3fc !important;
+  }
+
+  /* 12. THANH LONG CHÍ TÔN */
+  #viewport[data-skin="cyan"] {
+    background:
+      radial-gradient(circle at 50% 25%, rgba(0, 229, 255, 0.16) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 40%, #0a2936 0%, #05131c 72%, #02080d 100%) !important;
+    border: 2px solid #00e5ff !important;
+  }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <!-- HEADER -->
+  <div class="header-bar" id="headerDragBar">
+    <div class="brand-left" style="cursor:move;">
+      <svg width="26" height="20" viewBox="0 0 36 28" fill="none">
+        <path d="M18 14C13 4 2 3 3 12C4 18 12 18 18 15C12 19 5 24 9 26C13 28 17 22 18 16C19 22 23 28 27 26C31 24 24 19 18 15C24 18 32 18 33 12C34 3 23 4 18 14Z" stroke="var(--gold-bright)" stroke-width="1.8" fill="rgba(0,229,255,0.22)"/>
+      </svg>
+      <span>HD Studio</span>
+      <span id="hdrVersionBadge" style="font-size:10.5px;font-weight:900;padding:2px 7px;border-radius:999px;background:linear-gradient(90deg,#10b981,#059669);color:#ffffff;border:1px solid #6ee7b7;box-shadow:0 0 10px rgba(16,185,129,0.55);letter-spacing:0.4px;">✨ v2.2.0 CLOUD</span>
+    </div>
+    <div class="plugin-title" style="cursor:move;left:42%;">HD <span>KEY</span></div>
+    <div class="header-right">
+      <button class="hdr-tool-btn active" id="btnCloudUpdate" title="Kiểm tra & Cập nhật phần mềm trực tuyến từ Cloud Hồng Đăng Studio" style="border-color:#10b981;color:#ecfdf5;background:linear-gradient(180deg,rgba(16,185,129,0.42) 0%,#064e3b 100%);box-shadow:0 0 12px rgba(16,185,129,0.45);">
+        <span>☁ Cập Nhật</span>
+      </button>
+      <button class="hdr-tool-btn active" id="btnSkinMenu" title="Chọn Trang Phục (Skin) Liên Quân & Hello Kitty">
+        <span class="skin-dot" id="activeSkinDot" style="background: var(--gold-bright);"></span>
+        <span>🎨 Skin</span>
+      </button>
+      <button class="hdr-tool-btn" id="btnZoomOut" title="Thu nhỏ giao diện (-)">−</button>
+      <span id="zoomPctLabel" style="font-size:11.5px; min-width:36px; text-align:center; cursor:pointer;" title="Nhấn để về 100%">100%</span>
+      <button class="hdr-tool-btn" id="btnZoomIn" title="Phóng to giao diện (+)">+</button>
+      <button class="hdr-tool-btn active" id="btnPinTop" title="Ghim cửa sổ luôn nổi ngoài màn hình Windows">📌 Ghim</button>
+    </div>
+    <div class="skin-popover" id="skinPopover"></div>
+  </div>
+
+  <!-- 3 TOP TABS: Listen / Use File / Manual -->
+  <div class="mode-tabs-row">
+    <div class="mode-tab active" data-mode="0" id="tabListen">Listen</div>
+    <div class="mode-tab" data-mode="1" id="tabUseFile">Use File</div>
+    <div class="mode-tab" data-mode="2" id="tabManual">Manual</div>
+  </div>
+
+  <!-- DETECTOR STAGE WITH GOLDEN WAVEFORM BARS & NEON CYAN DRAGON -->
+  <div class="detector-stage">
+    <div class="stage-armor-overlay" id="akStageArmor"></div>
+    <canvas id="waveCanvas" width="820" height="310"></canvas>
+    <canvas id="dragonCanvas" width="820" height="310" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:4;"></canvas>
+
+    <!-- LEFT KNOB: KEY LOCK (ms) -->
+    <div class="side-knob-wrap">
+      <div class="knob-label">KEY LOCK</div>
+      <svg class="knob-svg" data-param="keyLockMs" data-min="500" data-max="5000" data-step="50" width="108" height="108" viewBox="0 0 108 108"></svg>
+      <div class="knob-value" id="val-keyLockMs">2000</div>
+    </div>
+
+    <!-- CENTER KEY CIRCLE + CHARACTER COSTUME EMBLEM -->
+    <div class="center-key-circle" id="centerCircleBtn" title="Nhấn để Dò lại Tông từ đầu">
+      <div class="costume-crest-overlay" id="akCostumeCrest"></div>
+      <svg width="248" height="248" viewBox="0 0 248 248" style="position:relative; z-index:10;">
+        <defs>
+          <radialGradient id="centerKeyGrad" cx="50%" cy="42%" r="56%">
+            <stop offset="0%" stop-color="#1e293b"/>
+            <stop offset="72%" stop-color="#0b1120"/>
+            <stop offset="100%" stop-color="#050811"/>
+          </radialGradient>
+        </defs>
+        <circle cx="124" cy="124" r="112" fill="url(#centerKeyGrad)" stroke="rgba(56, 189, 248, 0.28)" stroke-width="2.2"/>
+        <!-- Left Cyber Cyan Lock Arc -->
+        <path id="centerLockArc" d="" fill="none" stroke="var(--gold-bright)" stroke-width="5.5" stroke-linecap="round" filter="drop-shadow(0 0 8px var(--gold-bright))"/>
+      </svg>
+      <div class="center-key-readout">
+        <div class="big-key-letter" id="centerKeyText">B</div>
+        <div class="scale-sub-label" id="centerScaleText">MAJOR</div>
+        <div class="tempo-sub-label" id="centerTempoText">120 BPM</div>
+      </div>
+    </div>
+
+    <!-- RIGHT KNOB: CONFIDENCE -->
+    <div class="side-knob-wrap">
+      <div class="knob-label">CONFIDENCE</div>
+      <svg class="knob-svg" data-param="confidence" data-min="0.10" data-max="0.95" data-step="0.01" width="108" height="108" viewBox="0 0 108 108"></svg>
+      <div class="knob-value" id="val-confidence">0.35</div>
+    </div>
+  </div>
+
+  <!-- DROPDOWN ROW -->
+  <div class="dropdown-row">
+    <input type="file" id="hiddenAudioInput" accept=".mp3,.wav,.flac,.m4a,.ogg,audio/*" style="display:none" />
+    <span id="loadedFileBadge" style="font-size: 12.5px; font-weight: 700; color: var(--gold-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 310px;"></span>
+  </div>
+
+  <!-- 6-OCTAVE PIANO ROLL -->
+  <div class="piano-strip">
+    <div class="piano-keys" id="pianoContainer"></div>
+  </div>
+
+  <!-- BOTTOM-RIGHT RESIZE GRIP -->
+  <div class="resize-corner-grip" id="resizeGrip" title="Kéo để phóng to / thu nhỏ plugin">
+    <svg width="14" height="14" viewBox="0 0 14 14">
+      <line x1="4" y1="13" x2="13" y2="4" stroke="#d5a350" stroke-width="1.6"/>
+      <line x1="8" y1="13" x2="13" y2="8" stroke="#d5a350" stroke-width="1.6"/>
+      <line x1="11" y1="13" x2="13" y2="11" stroke="#d5a350" stroke-width="1.6"/>
+    </svg>
+  </div>
+  <!-- CLOUD UPDATE MODAL POPUP -->
+  <div id="cloudUpdateModal" style="display:none;position:absolute;inset:0;background:rgba(4,8,18,0.86);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;">
+    <div style="width:490px;background:linear-gradient(180deg,#0f172a 0%,#090d16 100%);border:2px solid #10b981;border-radius:16px;padding:22px 24px;box-shadow:0 0 42px rgba(16,185,129,0.5);color:#f8fafc;text-align:center;">
+      <div style="font-size:34px;margin-bottom:6px;">🚀</div>
+      <div id="cloudModalTitle" style="font-size:17px;font-weight:900;color:#34d399;margin-bottom:10px;letter-spacing:0.4px;">ĐANG KIỂM TRA CẬP NHẬT CLOUD...</div>
+      <div id="cloudModalDetail" style="font-size:13px;line-height:1.6;color:#cbd5e1;margin-bottom:16px;background:rgba(15,23,42,0.9);border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-align:left;">
+        Đang kết nối tới kho lưu trữ Hồng Đăng Studio:<br><b style="color:#38bdf8;">github.com/mentorlehaidang-create/hongdang-update</b>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button id="btnApplyCloudReload" style="background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);border:1px solid #fde68a;color:#ffffff;font-weight:900;font-size:13px;padding:9px 18px;border-radius:8px;cursor:pointer;box-shadow:0 0 14px rgba(245,158,11,0.5);">⚡ ÁP DỤNG & LÀM MỚI GIAO DIỆN NGAY</button>
+        <button id="btnCloseCloudModal" style="background:linear-gradient(180deg,#10b981 0%,#059669 100%);border:1px solid #6ee7b7;color:#ffffff;font-weight:800;font-size:13px;padding:9px 22px;border-radius:8px;cursor:pointer;box-shadow:0 0 14px rgba(16,185,129,0.4);">ĐÓNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const SCALE_NAMES = ["MAJOR", "MINOR", "DORIAN", "CHROMATIC"];
+  const SCALE_INTERVALS = [
+    [1,0,1,0,1,1,0,1,0,1,0,1], // 0: Major
+    [1,0,1,1,0,1,0,1,1,0,1,0], // 1: Minor
+    [1,0,1,1,0,1,0,1,0,1,1,0], // 2: Dorian
+    [1,1,1,1,1,1,1,1,1,1,1,1]  // 3: Chromatic
+  ];
+
+  const state = {
+    mode: 0,
+    keyLockMs: 2000,
+    confidence: 0.35,
+    key: 11, // B
+    scale: 0, // Major
+    locked: false,
+    lockProgress: 0.0,
+    musicPlaying: false,
+    tempoBpm: 0,
+    tempoLocked: false,
+    matchedSong: "",
+    matchedSource: "",
+    fileName: "",
+    pinned: true,
+    bars: []
+  };
+
+  function emitToHost(eventName, payload) {
+    if (window.__JUCE__ && window.__JUCE__.backend) {
+      window.__JUCE__.backend.emitEvent(eventName, payload || {});
+    }
+  }
+
+  function setParam(id, value) {
+    if ((id === "key" || id === "scale") && state.locked) {
+      return;
+    }
+    state[id] = value;
+    emitToHost("setParam", { id, value: Number(value) });
+    renderAll();
+  }
+
+  // Build 6-Octave Piano Keyboard
+  const whiteKeyEls = [];
+  const blackKeyEls = [];
+  (function buildPiano() {
+    const container = document.getElementById("pianoContainer");
+    const whitePcs = [0, 2, 4, 5, 7, 9, 11];
+    const blackMap = [
+      { afterWhite: 0, pc: 1 },
+      { afterWhite: 1, pc: 3 },
+      { afterWhite: 3, pc: 6 },
+      { afterWhite: 4, pc: 8 },
+      { afterWhite: 5, pc: 10 }
+    ];
+    const octaves = 6;
+    const totalWhites = octaves * 7;
+
+    for (let oct = 0; oct < octaves; oct++) {
+      for (let w = 0; w < 7; w++) {
+        const pc = whitePcs[w];
+        const div = document.createElement("div");
+        div.className = "white-key";
+        div.dataset.pc = pc;
+        div.addEventListener("click", () => {
+          setParam("key", pc);
+        });
+        container.appendChild(div);
+        whiteKeyEls.push(div);
+      }
+    }
+
+    for (let oct = 0; oct < octaves; oct++) {
+      for (const bm of blackMap) {
+        const whiteIdx = oct * 7 + bm.afterWhite + 1;
+        const leftPct = (whiteIdx / totalWhites) * 100;
+        const div = document.createElement("div");
+        div.className = "black-key";
+        div.style.left = `${leftPct}%`;
+        div.dataset.pc = bm.pc;
+        div.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setParam("key", bm.pc);
+        });
+        container.appendChild(div);
+        blackKeyEls.push(div);
+      }
+    }
+  })();
+
+  function polarToCartesian(cx, cy, r, angleDeg) {
+    const rad = (angleDeg - 90) * Math.PI / 180.0;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+
+  function describeArc(cx, cy, r, startAngle, endAngle) {
+    if (Math.abs(endAngle - startAngle) < 0.1) return "";
+    const start = polarToCartesian(cx, cy, r, endAngle);
+    const end = polarToCartesian(cx, cy, r, startAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    return ["M", start.x, start.y, "A", r, r, 0, largeArcFlag, 0, end.x, end.y].join(" ");
+  }
+
+  function renderKnobSvg(svg) {
+    const param = svg.dataset.param;
+    const min = parseFloat(svg.dataset.min);
+    const max = parseFloat(svg.dataset.max);
+    const val = Number(state[param] ?? min);
+    if (svg._lastVal === val) return;
+    svg._lastVal = val;
+    const norm = Math.max(0, Math.min(1, (val - min) / (max - min)));
+    const startDeg = -135;
+    const endDeg = -135 + norm * 270;
+    const cx = 54, cy = 54, rArc = 46, rBody = 38;
+
+    const trackPath = describeArc(cx, cy, rArc, -135, 135);
+    const valPath = norm > 0.003 ? describeArc(cx, cy, rArc, startDeg, endDeg) : "";
+    const ptr = polarToCartesian(cx, cy, rBody - 5, endDeg);
+    const ctr = polarToCartesian(cx, cy, 8, endDeg);
+
+    let capEmblem = "";
+    const curSkin = (typeof activeSkinId !== "undefined") ? activeSkinId : "origin";
+    if (curSkin === "hellokitty") {
+      capEmblem = `<circle cx="${cx}" cy="${cy}" r="${rBody - 2}" fill="#fff0f6" stroke="#ff69b4" stroke-width="2.2"/>
+        <path d="M54,60 C46,51 39,55 46,63 L54,70 L62,63 C69,55 62,51 54,60 Z" fill="#ff69b4"/>
+        <g transform="translate(78,26) rotate(22)">
+          <ellipse cx="-6" cy="0" rx="6" ry="4.2" fill="#ff1493" stroke="#fff" stroke-width="1.2"/>
+          <ellipse cx="6" cy="0" rx="6" ry="4.2" fill="#ff1493" stroke="#fff" stroke-width="1.2"/>
+          <circle r="3" fill="#ffb6c1" stroke="#fff" stroke-width="1"/>
+        </g>`;
+    } else if (curSkin === "nakroth") {
+      capEmblem = `<polygon points="54,20 83,37 83,71 54,88 25,71 25,37" fill="rgba(6,21,45,0.9)" stroke="#fde047" stroke-width="1.8"/>`;
+    } else if (curSkin === "tulen") {
+      capEmblem = `<circle cx="${cx}" cy="${cy}" r="32" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-dasharray="7 4"/>
+        <polygon points="54,26 77,66 31,66" fill="none" stroke="#fef08a" stroke-width="1.5"/>
+        <polygon points="54,82 77,42 31,42" fill="none" stroke="#38bdf8" stroke-width="1.5"/>`;
+    } else if (curSkin === "wukong" || curSkin === "lauriel" || curSkin === "florentino" || curSkin === "cyan") {
+      capEmblem = `<circle cx="${cx}" cy="${cy}" r="33" fill="none" stroke="#fde047" stroke-width="1.8"/>
+        <polygon points="54,23 61,47 85,54 61,61 54,85 47,61 23,54 47,47" fill="rgba(253,224,71,0.18)" stroke="var(--gold-bright)" stroke-width="1.4"/>`;
+    } else if (curSkin !== "origin") {
+      capEmblem = `<circle cx="${cx}" cy="${cy}" r="32" fill="none" stroke="var(--gold-bright)" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+    }
+
+    svg.innerHTML = `
+      <defs>
+        <radialGradient id="akGold_${param}" cx="35%" cy="28%" r="70%">
+          <stop offset="0%" stop-color="#334155"/>
+          <stop offset="55%" stop-color="#1e293b"/>
+          <stop offset="100%" stop-color="#090d16"/>
+        </radialGradient>
+      </defs>
+      <circle cx="${cx}" cy="${cy}" r="${rBody + 4}" fill="#090d16" stroke="rgba(148,163,184,0.18)" stroke-width="1.5"/>
+      <path d="${trackPath}" fill="none" stroke="#1e293b" stroke-width="4.2" stroke-linecap="round"/>
+      ${valPath ? `<path d="${valPath}" fill="none" stroke="var(--gold-bright)" stroke-width="4.6" stroke-linecap="round" filter="drop-shadow(0 0 6px var(--gold-bright))"/>` : ""}
+      <circle cx="${cx}" cy="${cy}" r="${rBody}" fill="url(#akGold_${param})" stroke="#475569" stroke-width="2"/>
+      ${capEmblem}
+      <line x1="${ctr.x}" y1="${ctr.y}" x2="${ptr.x}" y2="${ptr.y}" stroke="var(--gold-bright)" stroke-width="2.6" stroke-linecap="round"/>
+    `;
+  }
+
+  document.querySelectorAll(".knob-svg").forEach(svg => {
+    let dragging = false;
+    let startY = 0;
+    let startVal = 0;
+    const param = svg.dataset.param;
+    const min = parseFloat(svg.dataset.min);
+    const max = parseFloat(svg.dataset.max);
+    const step = parseFloat(svg.dataset.step || "1");
+
+    svg.addEventListener("pointerdown", e => {
+      dragging = true;
+      startY = e.clientY;
+      startVal = Number(state[param] ?? min);
+      svg.setPointerCapture(e.pointerId);
+    });
+    svg.addEventListener("pointermove", e => {
+      if (!dragging) return;
+      const dy = startY - e.clientY;
+      const delta = (dy / 150) * (max - min);
+      let next = Math.max(min, Math.min(max, startVal + delta));
+      next = Math.round(next / step) * step;
+      setParam(param, Number(next.toFixed(2)));
+    });
+    svg.addEventListener("pointerup", e => {
+      dragging = false;
+      try { svg.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+  });
+
+  // Mode Tabs
+  document.querySelectorAll(".mode-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const m = parseInt(tab.dataset.mode, 10);
+      if (m === 0) {
+        state.fileName = "";
+        emitToHost("resetListen", {});
+        setParam("mode", 0);
+      } else if (m === 1) {
+        if (window.__JUCE__ && window.__JUCE__.backend) {
+          emitToHost("openAudioFile", {});
+        } else {
+          document.getElementById("hiddenAudioInput").click();
+        }
+        setParam("mode", 1);
+      } else if (m === 2) {
+        setParam("mode", 2);
+      }
+    });
+  });
+
+  // Tunebat-Style Full-Song Audio File Key & BPM (Tempo) Analyzer (for Drag-and-Drop or File Input)
+  const RAW_MAJOR_PROF = [6.60, 1.95, 3.60, 1.95, 5.65, 4.20, 2.05, 5.25, 2.05, 3.95, 2.15, 3.35];
+  const RAW_MINOR_PROF = [6.60, 1.95, 3.50, 5.65, 1.95, 4.15, 2.05, 5.25, 3.95, 2.25, 3.75, 2.95];
+
+  function normalizeProfile(raw) {
+    const mean = raw.reduce((a, b) => a + b, 0) / 12;
+    const centered = raw.map(v => v - mean);
+    const norm = Math.sqrt(centered.reduce((a, b) => a + b * b, 0) + 1e-9);
+    return centered.map(v => v / norm);
+  }
+  const MAJ_PROF = normalizeProfile(RAW_MAJOR_PROF);
+  const MIN_PROF = normalizeProfile(RAW_MINOR_PROF);
+
+  function computeTunebatFileBpm(ch0, ch1, sr) {
+    const totalSamples = ch0.length;
+    const subHop = 512;
+    const envRate = sr / subHop;
+    const lpAlpha = 1.0 - Math.exp(-2.0 * Math.PI * 150.0 / sr);
+    const bpmHist = new Float32Array(120); // 60 .. 179 BPM
+    const ratios = [0.15, 0.35, 0.55, 0.75];
+    const sliceSamples = Math.min(Math.floor(sr * 8.0), Math.floor(totalSamples * 0.22));
+    if (sliceSamples < subHop * 60) return 120;
+
+    for (const r of ratios) {
+      const startPos = Math.min(totalSamples - sliceSamples, Math.floor(totalSamples * r));
+      if (startPos < 0) continue;
+      const numFrames = Math.floor(sliceSamples / subHop);
+      const onsetEnv = new Float32Array(numFrames);
+      let lpKick = 0, prevKick = 0, prevFull = 0, meanEnv = 0;
+
+      for (let f = 0; f < numFrames; f++) {
+        const base = startPos + f * subHop;
+        let kickE = 0, fullE = 0;
+        for (let i = 0; i < subHop; i++) {
+          const s = ch1 ? 0.5 * (ch0[base + i] + ch1[base + i]) : ch0[base + i];
+          lpKick += lpAlpha * (s - lpKick);
+          kickE += lpKick * lpKick;
+          fullE += s * s;
+        }
+        const kickRms = Math.sqrt(kickE / subHop);
+        const fullRms = Math.sqrt(fullE / subHop);
+        const flux = 1.65 * Math.max(0, kickRms - prevKick) + 0.85 * Math.max(0, fullRms - prevFull);
+        prevKick = kickRms;
+        prevFull = fullRms;
+        onsetEnv[f] = flux;
+        meanEnv += flux;
+      }
+      meanEnv /= (numFrames || 1);
+
+      let zeroLag = 0;
+      const centered = new Float32Array(numFrames);
+      for (let f = 0; f < numFrames; f++) {
+        const v = Math.max(0, onsetEnv[f] - meanEnv * 0.85);
+        centered[f] = v;
+        zeroLag += v * v;
+      }
+      if (zeroLag <= 1e-7) continue;
+
+      const corrAt = (lag) => {
+        if (lag <= 0 || lag >= numFrames - 16) return 0;
+        let sum = 0, e0 = 0, eL = 0;
+        const cnt = numFrames - lag;
+        for (let i = 0; i < cnt; i++) {
+          const a = centered[i], b = centered[i + lag];
+          sum += a * b;
+          e0 += a * a;
+          eL += b * b;
+        }
+        return sum / (Math.sqrt(e0 * eL) + 1e-7);
+      };
+      const corrFrac = (fLag) => {
+        const l0 = Math.floor(fLag);
+        const frac = fLag - l0;
+        return (1.0 - frac) * corrAt(l0) + frac * corrAt(l0 + 1);
+      };
+
+      const bpmScores = new Float32Array(165);
+      let bestBpm = 120, bestComb = 0;
+      for (let bpm = 66; bpm <= 160; bpm++) {
+        const lagF = (60.0 * envRate) / bpm;
+        if (lagF < 12 || lagF >= numFrames - 20) continue;
+        const c1 = corrFrac(lagF);
+        const c2 = lagF * 2.0 < numFrames - 16 ? corrFrac(lagF * 2.0) : c1;
+        const c3 = lagF * 3.0 < numFrames - 16 ? corrFrac(lagF * 3.0) : c2;
+        const c4 = lagF * 4.0 < numFrames - 16 ? corrFrac(lagF * 4.0) : c2;
+        const prior = (bpm >= 68 && bpm <= 132) ? 1.08 : 0.90;
+        const sc = (0.50 * c1 + 0.25 * c2 + 0.12 * c3 + 0.13 * c4) * prior;
+        bpmScores[bpm] = sc;
+        if (sc > bestComb) { bestComb = sc; bestBpm = bpm; }
+      }
+      if (bestBpm >= 134) {
+        const halfBpm = Math.round(bestBpm / 2);
+        if (halfBpm >= 67 && bpmScores[halfBpm] >= bestComb * 0.78) {
+          bestBpm = halfBpm;
+          bestComb = bpmScores[halfBpm];
+        }
+      }
+      if (bestComb > 0.04) {
+        const bin = Math.max(0, Math.min(119, bestBpm - 60));
+        bpmHist[bin] += bestComb;
+        if (bin > 0) bpmHist[bin - 1] += 0.25 * bestComb;
+        if (bin < 119) bpmHist[bin + 1] += 0.25 * bestComb;
+      }
+    }
+
+    let bestBin = 60, maxVal = 0;
+    for (let b = 0; b < 120; b++) {
+      if (bpmHist[b] > maxVal) {
+        maxVal = bpmHist[b];
+        bestBin = b;
+      }
+    }
+    return 60 + bestBin;
+  }
+
+  async function analyzeAudioFileInBrowser(file) {
+    if (!file) return;
+    const badge = document.getElementById("loadedFileBadge");
+    if (badge) badge.textContent = `⏳ Đang phân tích: ${file.name}...`;
+
+    try {
+      const arrayBuf = await file.arrayBuffer();
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const actx = new AudioCtx();
+      const audioBuf = await actx.decodeAudioData(arrayBuf);
+      const sr = audioBuf.sampleRate;
+      const ch0 = audioBuf.getChannelData(0);
+      const ch1 = audioBuf.numberOfChannels > 1 ? audioBuf.getChannelData(1) : null;
+      const totalSamples = ch0.length;
+
+      // 1. Tunebat Multi-Section Tempo (BPM) Detection
+      const detectedBpm = computeTunebatFileBpm(ch0, ch1, sr);
+
+      // 2. 4096-Point Radix-2 Narrowband FFT (on 4x-decimated 16384-sample frames = 2.69 Hz resolution)
+      //    + Local Spectral Peak Sieve + Lowest Harmonic Bass Root Extractor
+      const frameSize = 16384;
+      const decimLen = 4096;
+      const decimSr = sr * 0.25;
+      const binHz = decimSr / decimLen;
+
+      const hann = new Float32Array(decimLen);
+      for (let n = 0; n < decimLen; n++) {
+        hann[n] = 0.5 * (1.0 - Math.cos(2.0 * Math.PI * n / (decimLen - 1)));
+      }
+
+      const radix2Fft4096 = (re, im) => {
+        const N = 4096;
+        let j = 0;
+        for (let i = 0; i < N; i++) {
+          if (i < j) {
+            const tr = re[i]; re[i] = re[j]; re[j] = tr;
+            const ti = im[i]; im[i] = im[j]; im[j] = ti;
+          }
+          let m = N >> 1;
+          while (m >= 1 && j >= m) { j -= m; m >>= 1; }
+          j += m;
+        }
+        for (let len = 2; len <= N; len <<= 1) {
+          const half = len >> 1;
+          const ang = -2.0 * Math.PI / len;
+          const wRe = Math.cos(ang), wIm = Math.sin(ang);
+          for (let i = 0; i < N; i += len) {
+            let uRe = 1.0, uIm = 0.0;
+            for (let k = 0; k < half; k++) {
+              const i0 = i + k, i1 = i0 + half;
+              const tRe = uRe * re[i1] - uIm * im[i1];
+              const tIm = uRe * im[i1] + uIm * re[i1];
+              re[i1] = re[i0] - tRe;
+              im[i1] = im[i0] - tIm;
+              re[i0] += tRe;
+              im[i0] += tIm;
+              const nRe = uRe * wRe - uIm * wIm;
+              uIm = uRe * wIm + uIm * wRe;
+              uRe = nRe;
+            }
+          }
+        }
+      };
+
+      const globalChroma = new Float32Array(12);
+      const globalBass = new Float32Array(12);
+      const openingBass = new Float32Array(12);
+      const cadenceChroma = new Float32Array(12);
+      const cadenceBass = new Float32Array(12);
+      const globalTriads = new Float32Array(24);
+
+      const startSample = Math.min(totalSamples - frameSize, Math.floor(totalSamples * 0.03));
+      const endSample = Math.max(startSample + frameSize, Math.floor(totalSamples * 0.96));
+      const spanSamples = Math.max(frameSize, endSample - startSample);
+      const stepSamples = Math.max(frameSize >> 1, Math.floor(spanSamples / 260));
+
+      const rawMono = new Float32Array(frameSize);
+      const fftRe = new Float32Array(decimLen);
+      const fftIm = new Float32Array(decimLen);
+      const mag = new Float32Array(1400);
+      let validFrames = 0;
+
+      for (let pos = startSample; pos + frameSize <= endSample; pos += stepSamples) {
+        let energy = 0;
+        for (let n = 0; n < frameSize; n++) {
+          const mono = ch1 ? 0.5 * (ch0[pos + n] + ch1[pos + n]) : ch0[pos + n];
+          rawMono[n] = mono;
+          energy += mono * mono;
+        }
+        const rms = Math.sqrt(energy / frameSize);
+        if (rms < 0.0035) continue;
+
+        fftIm.fill(0);
+        fftRe[0] = (0.50 * rawMono[0] + 0.35 * rawMono[1] + 0.15 * rawMono[2]) * hann[0];
+        for (let k = 1; k < decimLen - 1; k++) {
+          const idx = k * 4;
+          const decim = 0.0625 * (rawMono[idx - 2] + rawMono[idx + 2])
+                      + 0.2500 * (rawMono[idx - 1] + rawMono[idx + 1])
+                      + 0.3750 * rawMono[idx];
+          fftRe[k] = decim * hann[k];
+        }
+        fftRe[decimLen - 1] = (0.50 * rawMono[frameSize - 1] + 0.35 * rawMono[frameSize - 2] + 0.15 * rawMono[frameSize - 3]) * hann[decimLen - 1];
+
+        radix2Fft4096(fftRe, fftIm);
+
+        let maxSpecMag = 0;
+        for (let b = 12; b < 1400; b++) {
+          const m = Math.sqrt(fftRe[b] * fftRe[b] + fftIm[b] * fftIm[b]);
+          mag[b] = m;
+          if (m > maxSpecMag) maxSpecMag = m;
+        }
+        if (maxSpecMag <= 1e-6) continue;
+
+        const fChroma = new Float32Array(12);
+        const fBass = new Float32Array(12);
+        const bassNoteSal = new Float32Array(60);
+        const peakGate = 0.035 * maxSpecMag;
+
+        for (let b = 18; b < 520; b++) {
+          const m0 = mag[b];
+          if (m0 < peakGate || m0 <= mag[b - 1] || m0 < mag[b + 1]) continue;
+
+          let bgSum = 0, bgCnt = 0;
+          for (let d = -7; d <= 7; d++) {
+            if (Math.abs(d) <= 1) continue;
+            bgSum += mag[b + d];
+            bgCnt++;
+          }
+          const bgMean = bgSum / bgCnt;
+          if (m0 < bgMean * 2.65) continue;
+
+          const mL = mag[b - 1], mR = mag[b + 1];
+          const denom = mL - 2.0 * m0 + mR;
+          const delta = Math.abs(denom) > 1e-7 ? Math.max(-0.5, Math.min(0.5, 0.5 * (mL - mR) / denom)) : 0;
+          const fPeak = (b + delta) * binHz;
+          const peakSal = m0 - bgMean;
+          if (fPeak < 52.0 || fPeak > 1320.0) continue;
+
+          const exactMidi = 69.0 + 12.0 * Math.log2(fPeak / 440.0);
+          const nearMidi = Math.round(exactMidi);
+          const centDev = Math.abs(exactMidi - nearMidi) * 100.0;
+          if (centDev > 36.0) continue;
+
+          const tuneWeight = 0.5 * (1.0 + Math.cos(Math.PI * centDev / 36.0));
+          const pc = ((nearMidi % 12) + 12) % 12;
+
+          let overtonePenalty = 1.0;
+          const fSub3 = fPeak / 3.0;
+          if (fSub3 >= 55.0) {
+            const bSub3 = Math.round(fSub3 / binHz);
+            if (bSub3 >= 16 && bSub3 < 500) {
+              const subMag = Math.max(mag[bSub3 - 1], mag[bSub3], mag[bSub3 + 1]);
+              if (subMag > m0 * 0.40) overtonePenalty = 0.25;
+            }
+          }
+
+          const b2 = Math.round(2.0 * (b + delta));
+          const b3 = Math.round(3.0 * (b + delta));
+          const h2 = b2 + 1 < 1400 ? Math.max(mag[b2 - 1], mag[b2], mag[b2 + 1]) : 0;
+          const h3 = b3 + 1 < 1400 ? Math.max(mag[b3 - 1], mag[b3], mag[b3 + 1]) : 0;
+
+          const sal = Math.pow(peakSal + 0.35 * h2 + 0.18 * h3, 0.75) * tuneWeight * overtonePenalty;
+          const regW = (fPeak >= 95.0 && fPeak <= 660.0) ? 1.30 : 0.85;
+          fChroma[pc] += sal * regW;
+
+          if (fPeak >= 55.0 && fPeak <= 240.0 && (h2 > bgMean * 1.6 || h3 > bgMean * 1.6)) {
+            const bSal = Math.pow(peakSal + 0.65 * h2 + 0.30 * h3, 0.80) * tuneWeight;
+            const mIdx = Math.max(0, Math.min(59, nearMidi - 33));
+            if (bSal > bassNoteSal[mIdx]) bassNoteSal[mIdx] = bSal;
+          }
+        }
+
+        let maxBassSal = 0;
+        for (let m = 0; m < 28; m++) {
+          if (bassNoteSal[m] > maxBassSal) maxBassSal = bassNoteSal[m];
+        }
+        if (maxBassSal > 0) {
+          let lowestMidiIdx = -1;
+          for (let m = 0; m < 23; m++) {
+            if (bassNoteSal[m] >= 0.38 * maxBassSal) { lowestMidiIdx = m; break; }
+          }
+          for (let m = 0; m < 26; m++) {
+            const bSal = bassNoteSal[m];
+            if (bSal <= 0) continue;
+            const pc = ((m + 33) % 12 + 12) % 12;
+            if (m === lowestMidiIdx || (lowestMidiIdx >= 0 && m === lowestMidiIdx + 12)) {
+              fBass[pc] += bSal * 1.85;
+            } else if (lowestMidiIdx >= 0 && (m === lowestMidiIdx + 3 || m === lowestMidiIdx + 4 || m === lowestMidiIdx + 7 || m === lowestMidiIdx + 10)) {
+              fBass[pc] += bSal * 0.12;
+            } else {
+              fBass[pc] += bSal * (m < 15 ? 1.10 : 0.45);
+            }
+          }
+        }
+
+        let maxC = 0, sumC = 0, maxB = 0;
+        for (let i = 0; i < 12; i++) {
+          if (fChroma[i] > maxC) maxC = fChroma[i];
+          sumC += fChroma[i];
+          if (fBass[i] > maxB) maxB = fBass[i];
+        }
+        if (maxC <= 1e-6 || maxC < (sumC / 12) * 1.45) continue;
+
+        const prog = (pos - startSample) / spanSamples;
+        const weight = prog >= 0.78 ? 1.25 : (prog >= 0.12 ? 1.10 : 1.00);
+        const normFC = new Float32Array(12);
+        const normFB = new Float32Array(12);
+        let sumNormFC = 0;
+        for (let i = 0; i < 12; i++) {
+          const nc = fChroma[i] / maxC;
+          const nb = maxB > 1e-6 ? fBass[i] / maxB : 0;
+          normFC[i] = nc;
+          normFB[i] = nb;
+          sumNormFC += nc;
+          if (nc >= 0.14) globalChroma[i] += nc * weight;
+          if (nb >= 0.14) globalBass[i] += nb * weight;
+          if (validFrames < 28 && nb >= 0.20) openingBass[i] += nb;
+          if (prog >= 0.80) {
+            if (nc >= 0.18) cadenceChroma[i] += nc;
+            if (nb >= 0.18) cadenceBass[i] += nb;
+          }
+        }
+
+        if (sumNormFC > 1e-6) {
+          let bestTriad = -1, bestTriadSc = -1e9;
+          for (let r = 0; r < 12; r++) {
+            const cR = normFC[r] / sumNormFC;
+            const cMin3 = normFC[(r + 3) % 12] / sumNormFC;
+            const cMaj3 = normFC[(r + 4) % 12] / sumNormFC;
+            const c5 = normFC[(r + 7) % 12] / sumNormFC;
+            const bR = normFB[r];
+            const bMin3 = normFB[(r + 3) % 12];
+            const bMaj3 = normFB[(r + 4) % 12];
+            const majSc = (cR + 1.15 * cMaj3 + 0.85 * c5 - 0.55 * cMin3) - (1.0 - (cR + cMaj3 + c5)) / 3.0 + 0.85 * bR - 0.25 * bMaj3;
+            if (majSc > bestTriadSc) { bestTriadSc = majSc; bestTriad = r; }
+            const minSc = (cR + 1.15 * cMin3 + 0.85 * c5 - 0.55 * cMaj3) - (1.0 - (cR + cMin3 + c5)) / 3.0 + 0.85 * bR - 0.25 * bMin3;
+            if (minSc > bestTriadSc) { bestTriadSc = minSc; bestTriad = 12 + r; }
+          }
+          if (bestTriad >= 0 && bestTriadSc > 0.20) {
+            globalTriads[bestTriad] += bestTriadSc * weight;
+          }
+        }
+        validFrames++;
+      }
+
+      for (let i = 0; i < 12; i++) {
+        globalChroma[i] += 0.20 * cadenceChroma[i];
+        globalBass[i] += 0.25 * cadenceBass[i] + 0.22 * openingBass[i];
+      }
+
+      let hMaxC = 0, hMaxB = 0, hMaxT = 0;
+      for (let i = 0; i < 12; i++) {
+        if (globalChroma[i] > hMaxC) hMaxC = globalChroma[i];
+        if (globalBass[i] > hMaxB) hMaxB = globalBass[i];
+      }
+      for (let t = 0; t < 24; t++) {
+        if (globalTriads[t] > hMaxT) hMaxT = globalTriads[t];
+      }
+
+      if (hMaxC > 1e-6) {
+        const normC = new Float32Array(12);
+        const normB = new Float32Array(12);
+        const normT = new Float32Array(24);
+        let cMean = 0;
+        for (let i = 0; i < 12; i++) {
+          normC[i] = globalChroma[i] / hMaxC;
+          normB[i] = hMaxB > 1e-6 ? globalBass[i] / hMaxB : 0;
+          cMean += normC[i];
+        }
+        for (let t = 0; t < 24; t++) {
+          normT[t] = hMaxT > 1e-6 ? globalTriads[t] / hMaxT : 0;
+        }
+        cMean /= 12;
+        let cVar = 0;
+        for (let i = 0; i < 12; i++) cVar += (normC[i] - cMean) * (normC[i] - cMean);
+        const cStd = Math.sqrt(cVar + 1e-9);
+
+        const outMaj = [1, 3, 6, 8, 10];
+        const outMin = [1, 4, 6, 9, 11];
+
+        let bestK = 0, bestS = 0, bestScore = -1e9;
+        for (let k = 0; k < 12; k++) {
+          for (let s = 0; s < 2; s++) {
+            const prof = s === 0 ? MIN_PROF : MAJ_PROF;
+            let corr = 0;
+            for (let i = 0; i < 12; i++) {
+              corr += ((normC[(k + i) % 12] - cMean) / cStd) * prof[i];
+            }
+            const third = s === 0 ? 3 : 4;
+            const triadChroma = 0.28 * normC[k] + 0.18 * normC[(k + third) % 12] + 0.14 * normC[(k + 7) % 12] + 0.05 * normC[(k + 5) % 12];
+            const bassScore = 0.52 * normB[k] + 0.12 * normB[(k + 7) % 12] + 0.07 * normB[(k + 5) % 12];
+
+            let diatonicTriad = 0;
+            if (s === 1) {
+              diatonicTriad = 0.28 * normT[k] + 0.11 * normT[(k + 7) % 12] + 0.10 * normT[(k + 5) % 12]
+                            + 0.06 * normT[12 + ((k + 2) % 12)] + 0.05 * normT[12 + ((k + 9) % 12)] + 0.04 * normT[12 + ((k + 4) % 12)];
+            } else {
+              diatonicTriad = 0.30 * normT[12 + k] + 0.11 * Math.max(normT[(k + 7) % 12], normT[12 + ((k + 7) % 12)])
+                            + 0.10 * Math.max(normT[12 + ((k + 5) % 12)], 0.75 * normT[(k + 5) % 12])
+                            + 0.07 * normT[(k + 8) % 12] + 0.07 * normT[(k + 10) % 12] + 0.04 * normT[(k + 3) % 12];
+            }
+
+            const outArr = s === 1 ? outMaj : outMin;
+            let outSum = 0;
+            for (let i = 0; i < 5; i++) outSum += normC[(k + outArr[i]) % 12];
+            let outPenalty = 0.42 * (outSum / 5.0);
+
+            if (s === 1) {
+              const nat7 = normC[(k + 11) % 12], flat7 = normC[(k + 10) % 12];
+              const nat4 = normC[(k + 5) % 12], sharp4 = normC[(k + 6) % 12];
+              if (flat7 > nat7 * 1.12) outPenalty += 0.22 * (flat7 - nat7);
+              if (sharp4 > nat4 * 1.12) outPenalty += 0.22 * (sharp4 - nat4);
+            } else {
+              const nat2 = normC[(k + 2) % 12], flat2 = normC[(k + 1) % 12];
+              const flat6 = normC[(k + 8) % 12], nat6 = normC[(k + 9) % 12];
+              if (flat2 > nat2 * 1.12) outPenalty += 0.22 * (flat2 - nat2);
+              if (nat6 > flat6 * 1.20 && normB[(k + 7) % 12] > normB[k] * 1.05) outPenalty += 0.20 * (nat6 - flat6);
+            }
+
+            const relKey = s === 0 ? (k + 3) % 12 : (k + 9) % 12;
+            const selfTriIdx = s === 0 ? 12 + k : k;
+            const relTriIdx = s === 0 ? relKey : 12 + relKey;
+            const selfStr = normC[k] * 0.30 + normB[k] * 0.45 + normT[selfTriIdx] * 0.25;
+            const relStr = normC[relKey] * 0.30 + normB[relKey] * 0.45 + normT[relTriIdx] * 0.25;
+            let relBonus = 0.30 * (selfStr - relStr);
+            if (s === 0) {
+              const lead7 = normC[(k + 11) % 12];
+              const dom5 = normC[(k + 7) % 12];
+              if (lead7 > 0.16 && dom5 > 0.22) relBonus += 0.18 * Math.min(lead7, dom5) + 0.12 * normT[(k + 7) % 12];
+            } else {
+              const relMin = (k + 9) % 12;
+              const relMinDom = normT[(relMin + 7) % 12];
+              const relMinLead = normC[(relMin + 11) % 12];
+              if (relMinLead > 0.20 && relMinDom > 0.18) relBonus -= 0.18 * Math.min(relMinLead, relMinDom);
+              if (normB[relMin] > normB[k] * 1.04 && normT[12 + relMin] > normT[k] * 1.02) relBonus -= 0.15 * (normB[relMin] - normB[k]);
+            }
+
+            const sc = corr * 0.50 + triadChroma + bassScore + diatonicTriad + relBonus - outPenalty;
+            if (sc > bestScore) {
+              bestScore = sc;
+              bestK = k;
+              bestS = s;
+            }
+          }
+        }
+
+        const winScale = bestS === 0 ? 1 : 0; // 0 = Major, 1 = Minor
+
+        state.mode = 1;
+        state.key = bestK;
+        state.scale = winScale;
+        state.tempoBpm = detectedBpm;
+        state.tempoLocked = true;
+        state.locked = true;
+        state.lockProgress = 1.0;
+        state.fileName = file.name;
+        emitToHost("setFileKey", { key: bestK, scale: winScale, bpm: detectedBpm, fileName: file.name });
+        renderAll();
+      }
+      await actx.close();
+    } catch (err) {
+      if (badge) badge.textContent = `⚠️ Không đọc được file: ${file.name}`;
+    }
+  }
+
+  document.getElementById("hiddenAudioInput").addEventListener("change", e => {
+    const file = e.target.files && e.target.files[0];
+    if (file) analyzeAudioFileInBrowser(file);
+    e.target.value = "";
+  });
+
+  window.addEventListener("dragover", e => {
+    e.preventDefault();
+  });
+  window.addEventListener("drop", e => {
+    e.preventDefault();
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) analyzeAudioFileInBrowser(file);
+  });
+
+  // Center Circle click -> Reset and Listen from scratch
+  document.getElementById("centerCircleBtn").addEventListener("click", () => {
+    emitToHost("resetListen", {});
+  });
+
+  // Ultra-Low-CPU Multi-Skin Creature, Portal & Wave Engine for HD KEY (24 FPS Throttled, 0% Extra CPU on Origin Skin)
+  const waveCanvas = document.getElementById("waveCanvas");
+  const wctx = waveCanvas.getContext("2d");
+  const dragonCanvas = document.getElementById("dragonCanvas");
+  const dctx = dragonCanvas ? dragonCanvas.getContext("2d") : null;
+  let animPhase = 0;
+  let dragonCycle = 0;
+  let lastWaveDrawTime = 0;
+
+  function hexToRgba(hex, alpha) {
+    let c = (hex || "#00e5ff").replace("#", "").trim();
+    if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+    const num = parseInt(c, 16) || 0x00e5ff;
+    return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+  }
+
+  function drawMiniHeart(ctx, x, y, size, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(0, size * 0.35);
+    ctx.bezierCurveTo(-size, -size * 0.4, -size * 0.5, -size, 0, -size * 0.35);
+    ctx.bezierCurveTo(size * 0.5, -size, size, -size * 0.4, 0, size * 0.35);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function getDragonPathPoint(u, phase) {
+    const clampedU = Math.max(0, Math.min(1, u));
+    const startX = 110;
+    const centerCx = 410;
+    const endX = 710;
+    const centerY = 155;
+    const orbitR = 112;
+    const leftCircleX = centerCx - orbitR;
+    const rightCircleX = centerCx + orbitR;
+
+    if (clampedU < 0.24) {
+      const p = clampedU / 0.24;
+      const ease = p * p * (3 - 2 * p);
+      const x = startX + ease * (leftCircleX - startX);
+      const waveY = Math.sin(p * Math.PI * 2.0 - phase * 0.8) * 18 * Math.sin(p * Math.PI);
+      return { x, y: centerY + waveY };
+    } else if (clampedU <= 0.76) {
+      const p = (clampedU - 0.24) / 0.52;
+      const angle = Math.PI + p * (Math.PI * 3.0);
+      const breathR = orbitR + Math.sin(p * Math.PI * 6.0 - phase) * 3.0;
+      return {
+        x: centerCx + breathR * Math.cos(angle),
+        y: centerY + breathR * Math.sin(angle)
+      };
+    } else {
+      const p = (clampedU - 0.76) / 0.24;
+      const ease = p * p * (3 - 2 * p);
+      const x = rightCircleX + ease * (endX - rightCircleX);
+      const waveY = Math.sin(p * Math.PI * 2.0 - phase * 0.8) * 18 * Math.sin(p * Math.PI);
+      return { x, y: centerY + waveY };
+    }
+  }
+
+  function drawSkinKnobPortal(ctx, cx, cy, baseR, p, accent, accent2, accentSub, intensity, portalType) {
+    if (!portalType || portalType === "none") return;
+    ctx.save();
+    const pulse = 0.90 + 0.12 * Math.sin(p * 3.0);
+    const outerR = baseR * 1.42 * pulse;
+
+    const aura = ctx.createRadialGradient(cx, cy, baseR * 0.5, cx, cy, outerR);
+    aura.addColorStop(0, hexToRgba("#ffffff", 0.22 * intensity));
+    aura.addColorStop(0.5, hexToRgba(accent, 0.32 * intensity));
+    aura.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = aura;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.translate(cx, cy);
+    ctx.strokeStyle = accent;
+    ctx.fillStyle = accent2 || "#ffffff";
+    ctx.globalAlpha = 0.80 * intensity;
+
+    if (portalType === "hex") {
+      ctx.rotate(p * 0.6);
+      for (let l = 0; l < 2; l++) {
+        const r = baseR * (1.02 + l * 0.14);
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2 + l * 0.5;
+          if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+          else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.closePath();
+        ctx.lineWidth = l === 0 ? 2.0 : 1.2;
+        ctx.stroke();
+      }
+    } else if (portalType === "gear") {
+      ctx.rotate(p * 0.9);
+      ctx.beginPath();
+      const teeth = 16;
+      for (let i = 0; i <= teeth * 2; i++) {
+        const a = (i / (teeth * 2)) * Math.PI * 2;
+        const r = (i % 2 === 0) ? baseR * 1.16 : baseR * 0.98;
+        if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+        else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+    } else if (portalType === "halo") {
+      ctx.rotate(-p * 0.5);
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        ctx.save();
+        ctx.rotate(a);
+        ctx.beginPath();
+        ctx.ellipse(baseR * 1.08, 0, 9, 3.2, 0.4, 0, Math.PI * 2);
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.restore();
+      }
+    } else if (portalType === "golden_hoop") {
+      ctx.rotate(p * 0.7);
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.arc(0, 0, baseR * 1.06, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, -baseR * 1.06, 7, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (portalType === "spikes") {
+      ctx.rotate(p * 0.5);
+      ctx.beginPath();
+      for (let i = 0; i < 12; i++) {
+        const a1 = (i / 12) * Math.PI * 2;
+        const a2 = ((i + 0.5) / 12) * Math.PI * 2;
+        ctx.lineTo(Math.cos(a1) * baseR * 0.96, Math.sin(a1) * baseR * 0.96);
+        ctx.lineTo(Math.cos(a2) * baseR * 1.24, Math.sin(a2) * baseR * 1.24);
+      }
+      ctx.closePath();
+      ctx.lineWidth = 1.7;
+      ctx.stroke();
+    } else if (portalType === "orbit") {
+      for (const tilt of [-0.45, 0.45]) {
+        ctx.save();
+        ctx.rotate(tilt + p * 0.4);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, baseR * 1.25, baseR * 0.52, 0, 0, Math.PI * 2);
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        const mx = Math.cos(p * 2) * baseR * 1.25;
+        const my = Math.sin(p * 2) * baseR * 0.52;
+        ctx.beginPath();
+        ctx.arc(mx, my, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    } else if (portalType === "floral") {
+      ctx.rotate(p * 0.4);
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        ctx.save();
+        ctx.rotate(a);
+        ctx.beginPath();
+        ctx.ellipse(baseR * 1.08, 0, 7, 3.5, 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    } else if (portalType === "moon") {
+      ctx.rotate(p * 0.5);
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.arc(0, 0, baseR * 1.06, 0.2, Math.PI * 1.6);
+      ctx.stroke();
+      for (let i = 0; i < 3; i++) {
+        const a = (i / 3) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(Math.cos(a) * baseR * 1.12, Math.sin(a) * baseR * 1.12, 3.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (portalType === "crown") {
+      ctx.rotate(p * 0.45);
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * baseR * 0.95, Math.sin(a) * baseR * 0.95);
+        ctx.lineTo(Math.cos(a) * baseR * 1.24, Math.sin(a) * baseR * 1.24);
+        ctx.lineWidth = 2.0;
+        ctx.stroke();
+      }
+    } else if (portalType === "crystal") {
+      ctx.rotate(p * 0.5);
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * baseR * 0.9, Math.sin(a) * baseR * 0.9);
+        ctx.lineTo(Math.cos(a) * baseR * 1.16, Math.sin(a) * baseR * 1.16);
+        ctx.lineWidth = 2.0;
+        ctx.stroke();
+      }
+    } else if (portalType === "bow_hearts") {
+      ctx.setLineDash([5, 6]);
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(0, 0, baseR * 1.06, p * 0.4, p * 0.4 + Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.save();
+      ctx.translate(baseR * 0.68, -baseR * 0.68);
+      ctx.rotate(0.35);
+      ctx.fillStyle = "#ff1493";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.4;
+      for (const s of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(s * 11, -8, s * 11, 0);
+        ctx.quadraticCurveTo(s * 11, 8, 0, 0);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(0, 0, 3.2, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffb6c1";
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    } else {
+      ctx.rotate(p * 0.7);
+      for (let r = 0; r < 10; r++) {
+        const ang = (r / 10) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(ang) * baseR * 0.92, Math.sin(ang) * baseR * 0.92);
+        ctx.lineTo(Math.cos(ang) * baseR * 1.16, Math.sin(ang) * baseR * 1.16);
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      }
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.arc(0, 0, baseR * 1.02, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSkinStageWaves(ctx, phase, accent, accent2, accentSub, effectType) {
+    const cy = 155;
+    if (!effectType || effectType === "bars") {
+      const numBars = 88;
+      const barW = 3;
+      const gap = (820 - numBars * barW) / numBars;
+      const grad = ctx.createLinearGradient(0, cy - 75, 0, cy + 75);
+      grad.addColorStop(0, accentSub);
+      grad.addColorStop(0.5, accent);
+      grad.addColorStop(1, accentSub);
+      ctx.fillStyle = grad;
+      for (let i = 0; i < numBars; i++) {
+        const x = i * (barW + gap);
+        if (x > 286 && x < 534) continue;
+        const env = Math.sin((i / numBars) * Math.PI);
+        const liveBar = (state.bars && state.bars.length > 0) ? state.bars[i % state.bars.length] : 0.35;
+        const wave = state.musicPlaying ? (0.3 + 0.7 * liveBar) : Math.abs(Math.sin(i * 0.28 + phase) * Math.cos(i * 0.13 - phase * 0.6)) * 0.45;
+        const bh = Math.max(4, (12 + wave * 64) * env);
+        ctx.fillRect(x, cy - bh, barW, bh * 2);
+      }
+      return;
+    }
+
+    const drawBank = (startX, endX, dir) => {
+      const span = endX - startX;
+      ctx.save();
+      for (let i = 0; i < 8; i++) {
+        const norm = (i + 0.5) / 8;
+        const env = Math.sin(norm * Math.PI);
+        const cx = startX + norm * span + Math.sin(phase + i) * 8;
+        const cloudY = cy + Math.cos(phase * 0.8 + i * 1.2) * 14 * env;
+        const rx = 32 + 28 * env;
+        const grad = ctx.createRadialGradient(cx, cloudY, 2, cx, cloudY, rx);
+        grad.addColorStop(0, hexToRgba(accent, 0.28 * env));
+        grad.addColorStop(0.6, hexToRgba(accentSub, 0.14 * env));
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cloudY, rx, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (effectType === "cyber_grid") {
+        ctx.strokeStyle = hexToRgba(accent, 0.55);
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (let s = 0; s <= 28; s++) {
+          const p = s / 28;
+          const x = startX + p * span;
+          const stepWave = Math.round(Math.sin(p * 10 - phase * 2 * dir) * 2) * 11 * Math.sin(p * Math.PI);
+          if (s === 0) ctx.moveTo(x, cy + stepWave);
+          else ctx.lineTo(x, cy + stepWave);
+        }
+        ctx.stroke();
+      } else if (effectType === "lightning") {
+        for (let bolt = -1; bolt <= 1; bolt += 2) {
+          ctx.beginPath();
+          for (let s = 0; s <= 22; s++) {
+            const p = s / 22;
+            const env = Math.sin(p * Math.PI);
+            const x = startX + p * span;
+            const jag = Math.sin(phase * 7 + s * 2.7 * bolt) * 24 * env;
+            if (s === 0) ctx.moveTo(x, cy);
+            else ctx.lineTo(x, cy + jag);
+          }
+          ctx.strokeStyle = bolt === 1 ? "#ffffff" : accent;
+          ctx.lineWidth = bolt === 1 ? 2.2 : 1.5;
+          ctx.stroke();
+        }
+      } else if (effectType === "candy_hearts") {
+        ctx.strokeStyle = hexToRgba("#ffffff", 0.65);
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let s = 0; s <= 30; s++) {
+          const p = s / 30;
+          const x = startX + p * span;
+          const y = cy + Math.sin(p * Math.PI * 4 - phase * dir) * 16 * Math.sin(p * Math.PI);
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        for (let i = 0; i < 5; i++) {
+          const norm = (i + 0.5) / 5;
+          const hx = startX + norm * span + Math.sin(phase + i * 2) * 10;
+          const hy = cy + Math.cos(phase * 1.4 + i * 1.7) * 28 * Math.sin(norm * Math.PI);
+          drawMiniHeart(ctx, hx, hy, 7 + (i % 2) * 3, i % 2 === 0 ? "#ff69b4" : "#ffb6c1");
+        }
+      } else {
+        for (let layer = 0; layer < 2; layer++) {
+          ctx.beginPath();
+          for (let s = 0; s <= 28; s++) {
+            const p = s / 28;
+            const env = Math.sin(p * Math.PI);
+            const x = startX + p * span;
+            const y = cy + Math.sin(p * Math.PI * 3.5 - phase * 1.4 * dir + layer * 1.6) * (18 + layer * 6) * env;
+            if (s === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = layer === 0 ? hexToRgba("#ffffff", 0.55) : hexToRgba(accent2 || accent, 0.50);
+          ctx.lineWidth = layer === 0 ? 2.4 : 1.7;
+          ctx.stroke();
+        }
+
+        for (let i = 0; i < 5; i++) {
+          const norm = ((i / 5) + phase * 0.06 * dir) % 1;
+          const posNorm = norm < 0 ? norm + 1 : norm;
+          const env = Math.sin(posNorm * Math.PI);
+          const px = startX + posNorm * span;
+          const py = cy + Math.sin(phase * 1.5 + i * 2.1) * 26 * env;
+          ctx.fillStyle = i % 2 === 0 ? "#ffffff" : accent2;
+          if (effectType === "sakura" || effectType === "blood_roses" || effectType === "forest") {
+            ctx.save();
+            ctx.translate(px, py);
+            ctx.rotate(phase + i);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 5.5, 2.8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          } else if (effectType === "blizzard" || effectType === "starlight" || effectType === "galaxy") {
+            ctx.beginPath();
+            ctx.moveTo(px - 5, py); ctx.lineTo(px + 5, py);
+            ctx.moveTo(px, py - 5); ctx.lineTo(px, py + 5);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+          } else {
+            ctx.beginPath();
+            ctx.arc(px, py, 3.0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      ctx.restore();
+    };
+
+    drawBank(18, 286, 1);
+    drawBank(534, 802, -1);
+  }
+
+  function drawSkinCreature(ctx, pts, phase, accent, accent2, accentSub, scaleMul, creatureType) {
+    if (!pts || pts.length < 3 || !creatureType || creatureType === "none") return;
+    const head = pts[0];
+    const flap = Math.sin(phase * 5.2);
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (creatureType === "hello_kitty") {
+      for (let i = pts.length - 1; i >= 1; i -= 2) {
+        const p = pts[i];
+        const sz = (1 - p.frac) * 7.5 * scaleMul;
+        if (i % 4 === 0) {
+          drawMiniHeart(ctx, p.x, p.y, sz * 1.1, i % 8 === 0 ? "#ff69b4" : "#ffb6c1");
+        } else {
+          ctx.fillStyle = "rgba(255, 182, 193, 0.55)";
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, sz * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      if (head) {
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(head.ang * 0.25);
+        ctx.scale(scaleMul * 1.05, scaleMul * 1.05);
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#ff69b4";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(-10, -8); ctx.lineTo(-13, -18); ctx.lineTo(-3, -12);
+        ctx.moveTo(10, -8);  ctx.lineTo(13, -18);  ctx.lineTo(3, -12);
+        ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 14, 11.5, 0, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.ellipse(-5.5, -1, 1.6, 2.3, 0, 0, Math.PI * 2);
+        ctx.ellipse(5.5, -1, 1.6, 2.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fbbf24";
+        ctx.beginPath();
+        ctx.ellipse(0, 2.2, 2.2, 1.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#1e293b";
+        ctx.lineWidth = 1.3;
+        for (const s of [-1, 1]) {
+          for (let w = -1; w <= 1; w++) {
+            ctx.beginPath();
+            ctx.moveTo(s * 10, w * 2.5);
+            ctx.lineTo(s * 16, w * 3.5);
+            ctx.stroke();
+          }
+        }
+        ctx.translate(8, -10);
+        ctx.rotate(0.25);
+        ctx.fillStyle = "#ff1493";
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.2;
+        for (const s of [-1, 1]) {
+          ctx.beginPath();
+          ctx.ellipse(s * 5.5, 0, 5.5, 4.0, 0, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff69b4";
+        ctx.fill(); ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+      return;
+    }
+
+    if (["thunderbird", "phoenix", "spirit_butterfly", "blood_bat", "astral_swan"].includes(creatureType)) {
+      for (let t = -1; t <= 1; t++) {
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i];
+          const spread = t * (4 + i * 0.55) * scaleMul;
+          const nx = -Math.sin(p.ang);
+          const ny = Math.cos(p.ang);
+          const tx = p.x + nx * spread;
+          const ty = p.y + ny * spread;
+          if (i === 0) ctx.moveTo(tx, ty);
+          else ctx.lineTo(tx, ty);
+        }
+        ctx.strokeStyle = t === 0 ? "#ffffff" : accent;
+        ctx.lineWidth = (t === 0 ? 3.2 : 1.8) * scaleMul;
+        ctx.globalAlpha = 0.85;
+        ctx.stroke();
+      }
+      if (head) {
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(head.ang);
+        ctx.scale(scaleMul, scaleMul);
+        const wingSpan = 26 + flap * 9;
+        for (const s of [-1, 1]) {
+          ctx.beginPath();
+          ctx.moveTo(2, 0);
+          if (creatureType === "spirit_butterfly") {
+            ctx.bezierCurveTo(10, s * wingSpan, -12, s * (wingSpan + 6), -6, 0);
+            ctx.bezierCurveTo(-14, s * (wingSpan * 0.75), -26, s * (wingSpan * 0.5), -14, 0);
+          } else if (creatureType === "blood_bat") {
+            ctx.lineTo(6, s * wingSpan);
+            ctx.lineTo(-4, s * (wingSpan * 0.65));
+            ctx.lineTo(-12, s * (wingSpan * 0.85));
+            ctx.lineTo(-16, 0);
+          } else {
+            ctx.quadraticCurveTo(8, s * wingSpan, -14, s * (wingSpan * 1.1));
+            ctx.quadraticCurveTo(-8, s * (wingSpan * 0.45), -16, 0);
+          }
+          ctx.fillStyle = hexToRgba(accent, 0.78);
+          ctx.fill();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(16, 0); ctx.lineTo(4, -5); ctx.lineTo(-10, 0); ctx.lineTo(4, 5);
+        ctx.closePath();
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+      return;
+    }
+
+    if (["nine_tails", "cyber_tiger", "frost_wolf", "monkey_king", "cosmic_whale"].includes(creatureType)) {
+      const tailCount = creatureType === "nine_tails" ? 7 : 1;
+      for (let t = 0; t < tailCount; t++) {
+        const offset = (t - (tailCount - 1) / 2) * 4.5 * scaleMul;
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const p = pts[i];
+          const nx = -Math.sin(p.ang);
+          const ny = Math.cos(p.ang);
+          const fan = offset * p.frac * 1.8 + Math.sin(phase * 4 - i * 0.3 + t) * 2.5 * p.frac;
+          const tx = p.x + nx * fan;
+          const ty = p.y + ny * fan;
+          if (i === 0) ctx.moveTo(tx, ty);
+          else ctx.lineTo(tx, ty);
+        }
+        ctx.strokeStyle = t % 2 === 0 ? accent : (accent2 || "#ffffff");
+        ctx.lineWidth = (creatureType === "nine_tails" ? 3.2 : 8.5) * scaleMul;
+        ctx.globalAlpha = 0.85;
+        ctx.stroke();
+      }
+      if (head) {
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(head.ang);
+        ctx.scale(scaleMul, scaleMul);
+        if (creatureType === "cosmic_whale") {
+          ctx.fillStyle = accent;
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 18, 9, 0, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(2, s * 6);
+            ctx.quadraticCurveTo(-6, s * 22, -16, s * 16);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+          }
+        } else if (creatureType === "monkey_king") {
+          ctx.save();
+          ctx.rotate(phase * 5);
+          ctx.strokeStyle = "#fde047";
+          ctx.lineWidth = 4.0;
+          ctx.beginPath();
+          ctx.moveTo(-18, 0); ctx.lineTo(18, 0);
+          ctx.stroke();
+          ctx.strokeStyle = "#ef4444";
+          ctx.lineWidth = 3.0;
+          ctx.beginPath();
+          ctx.moveTo(-12, 0); ctx.lineTo(12, 0);
+          ctx.stroke();
+          ctx.restore();
+        } else {
+          ctx.fillStyle = accent;
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.6;
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(-2, s * 6);
+            ctx.lineTo(-14, s * 16);
+            ctx.lineTo(-10, s * 4);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.moveTo(19, 0); ctx.lineTo(6, -8); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.lineTo(6, 8);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(4, -3.8, 1.8, 0, Math.PI * 2);
+          ctx.arc(4, 3.8, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      ctx.restore();
+      return;
+    }
+
+    // Default Fierce Eastern Dragon (Thanh Long / Custom) - Zero Loop ShadowBlur
+    for (let i = pts.length - 1; i >= 1; i--) {
+      const p0 = pts[i];
+      const p1 = pts[i - 1];
+      const taper = Math.sin((1 - p0.frac * 0.88) * Math.PI * 0.78);
+      const radius = Math.max(1.8, 9.5 * taper * scaleMul);
+      const nx = -Math.sin(p0.ang);
+      const ny = Math.cos(p0.ang);
+
+      ctx.beginPath();
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = radius * 2.1;
+      ctx.globalAlpha = 0.28 * (1 - p0.frac * 0.6);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.strokeStyle = "#090d16";
+      ctx.lineWidth = radius * 1.2;
+      ctx.globalAlpha = 0.92;
+      ctx.stroke();
+
+      if (i % 2 === 0) {
+        ctx.beginPath();
+        ctx.arc(p0.x, p0.y, radius * 0.76, p0.ang - 1.1, p0.ang + 1.1);
+        ctx.strokeStyle = i % 4 === 0 ? "#ffffff" : accent;
+        ctx.lineWidth = 1.8 * scaleMul;
+        ctx.globalAlpha = 0.90;
+        ctx.stroke();
+
+        const spineLen = (8 + 8 * taper) * scaleMul;
+        ctx.beginPath();
+        ctx.moveTo(p0.x + nx * radius * 0.4, p0.y + ny * radius * 0.4);
+        ctx.lineTo(p0.x - Math.cos(p0.ang) * spineLen * 0.7 + nx * spineLen, p0.y - Math.sin(p0.ang) * spineLen * 0.7 + ny * spineLen);
+        ctx.lineTo(p1.x + nx * radius * 0.3, p1.y + ny * radius * 0.3);
+        ctx.fillStyle = accent;
+        ctx.globalAlpha = 0.82 * taper;
+        ctx.fill();
+      }
+
+      if (i === 6 || i === 16) {
+        const hipX = p0.x - nx * radius * 0.5;
+        const hipY = p0.y - ny * radius * 0.5;
+        const kneeX = hipX + Math.cos(p0.ang - 1.2) * 13 * scaleMul;
+        const kneeY = hipY + Math.sin(p0.ang - 1.2) * 13 * scaleMul;
+        const ankleX = kneeX + Math.cos(p0.ang + 0.3) * 10 * scaleMul;
+        const ankleY = kneeY + Math.sin(p0.ang + 0.3) * 10 * scaleMul;
+        ctx.beginPath();
+        ctx.moveTo(hipX, hipY); ctx.lineTo(kneeX, kneeY); ctx.lineTo(ankleX, ankleY);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 2.8 * scaleMul;
+        ctx.globalAlpha = 0.92;
+        ctx.stroke();
+        for (let c = -1; c <= 1; c++) {
+          ctx.beginPath();
+          ctx.moveTo(ankleX, ankleY);
+          ctx.lineTo(ankleX + Math.cos(p0.ang + c * 0.4) * 6.5 * scaleMul, ankleY + Math.sin(p0.ang + c * 0.4) * 6.5 * scaleMul);
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.6 * scaleMul;
+          ctx.stroke();
+        }
+      }
+    }
+
+    if (head) {
+      ctx.save();
+      ctx.translate(head.x, head.y);
+      ctx.rotate(head.ang);
+      ctx.scale(scaleMul, scaleMul);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.8;
+      for (const s of [-1, 1]) {
+        const waveW = Math.sin(phase * 4.0 + s) * 5.5;
+        ctx.beginPath();
+        ctx.moveTo(11, s * 4);
+        ctx.bezierCurveTo(25, s * (13 + waveW), 7, s * (24 - waveW), -16, s * (28 + waveW));
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-1, s * 5.5);
+        ctx.quadraticCurveTo(-14, s * 17, -28, s * 21);
+        ctx.lineTo(-19, s * 10.5);
+        ctx.closePath();
+        ctx.fillStyle = accent;
+        ctx.fill(); ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo(21, -2.2); ctx.lineTo(12, -8.0); ctx.lineTo(2, -12.0); ctx.lineTo(-10, -9.5);
+      ctx.lineTo(-6, 0); ctx.lineTo(-10, 9.5); ctx.lineTo(2, 12.0); ctx.lineTo(12, 8.0);
+      ctx.lineTo(21, 2.2); ctx.lineTo(14, 0);
+      ctx.closePath();
+      ctx.fillStyle = accent;
+      ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(27, 0, 3.6, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function drawAutoKeyCreatureScene(ctx, headU, phase, accent, accentMid, accentSub, cfg) {
+    if (!ctx || !cfg || cfg.creature === "none") return;
+
+    drawSkinKnobPortal(ctx, 110, 155, 50, phase, accent, accentMid, accentSub, 0.92, cfg.portal);
+    drawSkinKnobPortal(ctx, 710, 155, 50, -phase, accent, accentMid, accentSub, 0.92, cfg.portal);
+    drawSkinKnobPortal(ctx, 410, 155, 112, phase * 0.5, accent, accentMid, accentSub, 0.65, cfg.portal);
+
+    if (!state.musicPlaying) return;
+
+    const numSegs = 26;
+    const bodySpanU = 0.22;
+    const pts = [];
+
+    for (let i = 0; i < numSegs; i++) {
+      const frac = i / (numSegs - 1);
+      const segU = headU - frac * bodySpanU;
+      if (segU < 0.0 || segU > 1.0) continue;
+      const p = getDragonPathPoint(segU, phase);
+      const pNext = getDragonPathPoint(Math.min(1.0, segU + 0.008), phase);
+      const rawAng = Math.atan2(pNext.y - p.y, pNext.x - p.x);
+      const nx = -Math.sin(rawAng);
+      const ny = Math.cos(rawAng);
+      const slither = Math.sin(phase * 4.2 - i * 0.42) * (3.6 * Math.sin(frac * Math.PI));
+      pts.push({
+        x: p.x + nx * slither,
+        y: p.y + ny * slither,
+        ang: rawAng,
+        idx: i,
+        frac
+      });
+    }
+
+    drawSkinCreature(ctx, pts, phase, accent, accentMid, accentSub, 0.96, cfg.creature);
+  }
+
+  function drawWaveformBars(ts) {
+    if (document.hidden) {
+      requestAnimationFrame(drawWaveformBars);
+      return;
+    }
+    const minInterval = state.musicPlaying ? 42 : 90;
+    if (ts - lastWaveDrawTime < minInterval) {
+      requestAnimationFrame(drawWaveformBars);
+      return;
+    }
+    lastWaveDrawTime = ts;
+
+    wctx.clearRect(0, 0, 820, 310);
+    if (dctx) dctx.clearRect(0, 0, 820, 310);
+
+    if (state.musicPlaying) {
+      animPhase += 0.09;
+      dragonCycle = (dragonCycle + 0.008) % 1.22;
+    } else {
+      animPhase += 0.04;
+      dragonCycle = 0;
+    }
+
+    const cBright = (currentSkinConfig && currentSkinConfig.accent) || "#00e5ff";
+    const cMid = (currentSkinConfig && currentSkinConfig.accent2) || "#38bdf8";
+    const cDim = (currentSkinConfig && currentSkinConfig.sub) || "#6366f1";
+
+    drawSkinStageWaves(wctx, animPhase, cBright, cMid, cDim, currentSkinConfig ? currentSkinConfig.effect : "bars");
+    if (dctx && currentSkinConfig && currentSkinConfig.creature !== "none") {
+      drawAutoKeyCreatureScene(dctx, dragonCycle, animPhase, cBright, cMid, cDim, currentSkinConfig);
+    }
+    requestAnimationFrame(drawWaveformBars);
+  }
+  requestAnimationFrame(drawWaveformBars);
+
+  function renderAll() {
+    document.querySelectorAll(".knob-svg").forEach(renderKnobSvg);
+
+    document.getElementById("val-keyLockMs").textContent = Math.round(state.keyLockMs);
+    document.getElementById("val-confidence").textContent = Number(state.confidence).toFixed(2);
+
+    document.querySelectorAll(".mode-tab").forEach(t => {
+      t.classList.toggle("active", parseInt(t.dataset.mode, 10) === Number(state.mode));
+    });
+
+    const keyName = KEY_NAMES[state.key] || "C";
+    const scaleName = SCALE_NAMES[state.scale] || "MAJOR";
+    document.getElementById("centerKeyText").textContent = keyName;
+    document.getElementById("centerScaleText").textContent = scaleName;
+
+    const tempoEl = document.getElementById("centerTempoText");
+    if (tempoEl) {
+      const bpm = Number(state.tempoBpm || 0);
+      tempoEl.textContent = bpm >= 50 ? `${Math.round(bpm)} BPM` : (state.musicPlaying ? "... BPM" : "120 BPM");
+    }
+
+    const badge = document.getElementById("loadedFileBadge");
+    if (badge) {
+      badge.textContent = state.fileName ? `🎵 ${state.fileName} → ${keyName} ${scaleName}` : "";
+    }
+
+    const btnPinTop = document.getElementById("btnPinTop");
+    if (btnPinTop) btnPinTop.classList.toggle("active", Boolean(state.pinned));
+
+    // Left Lock Arc on Center Circle
+    const prog = Math.max(0.12, Math.min(1.0, Number(state.lockProgress ?? 1.0)));
+    const halfSpan = 52 * prog;
+    const arcPath = describeArc(124, 124, 112, 270 - halfSpan, 270 + halfSpan);
+    document.getElementById("centerLockArc").setAttribute("d", arcPath);
+
+    // Update Piano Keyboard Highlighting
+    const scaleArr = SCALE_INTERVALS[state.scale] || SCALE_INTERVALS[0];
+    const updateKeyEl = (el) => {
+      const pc = parseInt(el.dataset.pc, 10);
+      const rel = ((pc - state.key) % 12 + 12) % 12;
+      const inScale = scaleArr[rel] === 1;
+      const isRoot = (pc === state.key);
+      el.classList.toggle("in-scale", inScale);
+      el.classList.toggle("root-key", isRoot);
+    };
+    whiteKeyEls.forEach(updateKeyEl);
+    blackKeyEls.forEach(updateKeyEl);
+  }
+
+  // Responsive Scaling & Windows Desktop Floating Mode
+  let currentScalePct = 100;
+
+  function applyWindowScale(pct) {
+    currentScalePct = Math.max(65, Math.min(165, Math.round(pct)));
+    document.getElementById("zoomPctLabel").textContent = `${currentScalePct}%`;
+    const newW = Math.round(820 * (currentScalePct / 100));
+    const newH = Math.round(580 * (currentScalePct / 100));
+    emitToHost("resizeWindow", { width: newW, height: newH });
+  }
+
+  document.getElementById("btnZoomOut").addEventListener("click", () => {
+    applyWindowScale(currentScalePct - 10);
+    emitToHost("stepZoom", { delta: -0.10 });
+  });
+  document.getElementById("btnZoomIn").addEventListener("click", () => {
+    applyWindowScale(currentScalePct + 10);
+    emitToHost("stepZoom", { delta: 0.10 });
+  });
+  document.getElementById("zoomPctLabel").addEventListener("click", () => applyWindowScale(100));
+
+  const btnPinTop = document.getElementById("btnPinTop");
+  btnPinTop.addEventListener("click", () => {
+    state.pinned = !state.pinned;
+    btnPinTop.classList.toggle("active", state.pinned);
+    emitToHost("togglePin", { pinned: state.pinned });
+  });
+
+  // 1 Bản Mặc Định Gốc (Không hiệu ứng - 0% CPU) + 12 Skins (10 Liên Quân + Thanh Long + Hello Kitty) mỗi Skin 1 Linh Vật & Hiệu Ứng riêng biệt
+  const SKIN_PRESETS = [
+    { id: "origin",     name: "🎛️ Giao Diện Gốc (Không Hiệu Ứng)", creature: "none",             effect: "bars",         portal: "none",        accent: "#00e5ff", accent2: "#38bdf8", sub: "#6366f1", bg1: "#0e1626", bg2: "#070b14" },
+    { id: "cyan",       name: "🐉 Thanh Long (Rồng & Mây)",        creature: "dragon",           effect: "clouds",       portal: "bagua",       accent: "#00e5ff", accent2: "#38bdf8", sub: "#6366f1", bg1: "#0e1626", bg2: "#070b14" },
+    { id: "nakroth",    name: "⚔️ Nakroth (Bạch Hổ Cyber)",        creature: "cyber_tiger",      effect: "cyber_grid",   portal: "hex",         accent: "#00f0ff", accent2: "#fde047", sub: "#3b82f6", bg1: "#0c1938", bg2: "#060c1d" },
+    { id: "tulen",      name: "⚡ Tulen (Đại Bàng Sấm Sét)",       creature: "thunderbird",      effect: "lightning",    portal: "gear",        accent: "#fbbf24", accent2: "#fef08a", sub: "#ea580c", bg1: "#261b08", bg2: "#130d04" },
+    { id: "lauriel",    name: "🪽 Lauriel (Phượng Hoàng)",         creature: "phoenix",          effect: "aurora",       portal: "halo",        accent: "#e879f9", accent2: "#f0abfc", sub: "#9333ea", bg1: "#230d38", bg2: "#11061c" },
+    { id: "wukong",     name: "🔥 Ngộ Không (Kim Hầu Lửa)",        creature: "monkey_king",      effect: "fire",         portal: "golden_hoop", accent: "#ff8c00", accent2: "#fde047", sub: "#ef4444", bg1: "#291206", bg2: "#140802" },
+    { id: "violet_lq",  name: "🩸 Violet (Huyết Dơi Ác Quỷ)",      creature: "blood_bat",        effect: "blood_roses",  portal: "spikes",      accent: "#ff2a5f", accent2: "#fb7185", sub: "#991b1b", bg1: "#2a0912", bg2: "#150409" },
+    { id: "murad",      name: "🌌 Murad (Cá Voi Vũ Trụ)",          creature: "cosmic_whale",     effect: "galaxy",       portal: "orbit",       accent: "#818cf8", accent2: "#38bdf8", sub: "#4f46e5", bg1: "#121336", bg2: "#08091c" },
+    { id: "telannas",   name: "🏹 Tel'Annas (Bướm Thần Ngọc)",     creature: "spirit_butterfly", effect: "forest",       portal: "floral",      accent: "#10b981", accent2: "#34d399", sub: "#0d9488", bg1: "#092622", bg2: "#041311" },
+    { id: "liliana",    name: "🦊 Liliana (Cửu Vĩ Hồ 9 Đuôi)",     creature: "nine_tails",       effect: "sakura",       portal: "moon",        accent: "#f472b6", accent2: "#c084fc", sub: "#db2777", bg1: "#280e2b", bg2: "#140616" },
+    { id: "florentino", name: "✨ Florentino (Thiên Nga Kiếm)",    creature: "astral_swan",      effect: "starlight",    portal: "crown",       accent: "#c084fc", accent2: "#fbbf24", sub: "#7e22ce", bg1: "#1d0f36", bg2: "#0e071b" },
+    { id: "raz",        name: "❄️ Raz (Sói Băng Bắc Cực)",         creature: "frost_wolf",       effect: "blizzard",     portal: "crystal",     accent: "#7dd3fc", accent2: "#f8fafc", sub: "#0284c7", bg1: "#0e2238", bg2: "#07111d" },
+    { id: "hellokitty", name: "🎀 Hello Kitty (Mèo Nơ Hồng)",      creature: "hello_kitty",      effect: "candy_hearts", portal: "bow_hearts",  accent: "#ff69b4", accent2: "#ffb6c1", sub: "#fb7185", bg1: "#331024", bg2: "#1c0713" }
+  ];
+  let activeSkinId = "origin";
+  let currentSkinConfig = SKIN_PRESETS[0];
+
+  function applyCustomColors(accent, accent2, sub, bg1, bg2) {
+    const root = document.documentElement;
+    root.style.setProperty("--gold-bright", accent);
+    root.style.setProperty("--gold-mid", accent2);
+    root.style.setProperty("--gold-dim", sub);
+    root.style.setProperty("--amber-arc", accent);
+    if (bg1 && bg2) {
+      root.style.setProperty("--bg-panel", bg1);
+      root.style.setProperty("--bg-dark", bg2);
+    }
+    const dot = document.getElementById("activeSkinDot");
+    if (dot) dot.style.background = accent;
+    document.querySelectorAll(".knob-svg").forEach(svg => { svg._lastVal = undefined; renderKnobSvg(svg); });
+  }
+
+  function buildCenterCostumeSvg(skinId) {
+    if (!skinId || skinId === "origin") return "";
+    if (skinId === "hellokitty") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-86,-68 L-108,-132 L-38,-98 Z" fill="#ffffff" stroke="#ff69b4" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M-82,-78 L-96,-118 L-48,-96 Z" fill="#ffb6c1"/>
+        <path d="M86,-68 L108,-132 L38,-98 Z" fill="#ffffff" stroke="#ff69b4" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M82,-78 L96,-118 L48,-96 Z" fill="#ffb6c1"/>
+        <g stroke="#d61f69" stroke-width="3.5" stroke-linecap="round">
+          <line x1="-102" y1="-18" x2="-142" y2="-28"/><line x1="-105" y1="2" x2="-148" y2="2"/><line x1="-102" y1="22" x2="-142" y2="32"/>
+          <line x1="102" y1="-18" x2="142" y2="-28"/><line x1="105" y1="2" x2="148" y2="2"/><line x1="102" y1="22" x2="142" y2="32"/>
+        </g>
+        <g transform="translate(68,-102) rotate(18)">
+          <path d="M0,0 C-18,-28 -46,-22 -44,2 C-42,24 -16,26 0,4 Z" fill="#ff1493" stroke="#ffffff" stroke-width="3"/>
+          <path d="M0,0 C18,-28 46,-22 44,2 C42,24 16,26 0,4 Z" fill="#ff1493" stroke="#ffffff" stroke-width="3"/>
+          <circle cx="-22" cy="0" r="6" fill="#ff85b3"/><circle cx="22" cy="0" r="6" fill="#ff85b3"/>
+          <ellipse cx="0" cy="2" rx="11" ry="13" fill="#ff69b4" stroke="#ffffff" stroke-width="3"/>
+        </g>
+        <path d="M-85,88 Q0,132 85,88" fill="none" stroke="#ff69b4" stroke-width="3" stroke-dasharray="6 6"/>
+        <path d="M0,122 C-12,108 -24,116 -12,130 L0,142 L12,130 C24,116 12,108 0,122 Z" fill="#ff1493" stroke="#ffffff" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "nakroth") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <g fill="rgba(0,240,255,0.22)" stroke="#00f0ff" stroke-width="2.2">
+          <polygon points="-102,-35 -166,-92 -142,-28 -106,-10"/>
+          <polygon points="-106,0 -168,-18 -150,24 -104,22"/>
+          <polygon points="-98,32 -152,58 -126,82 -90,52"/>
+          <polygon points="102,-35 166,-92 142,-28 106,-10"/>
+          <polygon points="106,0 168,-18 150,24 104,22"/>
+          <polygon points="98,32 152,58 126,82 90,52"/>
+        </g>
+        <polygon points="0,-96 -58,-142 -24,-102 0,-112 24,-102 58,-142" fill="#fde047" stroke="#00f0ff" stroke-width="2"/>
+        <polygon points="0,-88 -12,-118 0,-132 12,-118" fill="#00f0ff"/>
+        <polygon points="-42,98 0,128 42,98 24,106 0,116 -24,106" fill="#fde047" stroke="#00f0ff" stroke-width="1.8"/>
+      </svg>`;
+    }
+    if (skinId === "tulen") {
+      let drums = "";
+      for (let i = 0; i < 6; i++) {
+        const a = (-150 + i * 60) * Math.PI / 180;
+        const x = Math.cos(a) * 134, y = Math.sin(a) * 124;
+        drums += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+          <circle r="15" fill="#171005" stroke="#fbbf24" stroke-width="2.8"/>
+          <polygon points="0,-10 8,5 -8,5" fill="none" stroke="#fef08a" stroke-width="1.8"/>
+          <polygon points="0,10 8,-5 -8,-5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+          <circle r="4" fill="#ffffff"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <circle r="130" fill="none" stroke="rgba(251,191,36,0.45)" stroke-width="2" stroke-dasharray="10 8"/>
+        ${drums}
+        <polygon points="0,-102 -32,-138 0,-124 32,-138" fill="#fbbf24" stroke="#ffffff" stroke-width="1.8"/>
+      </svg>`;
+    }
+    if (skinId === "lauriel") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <ellipse cx="0" cy="-118" rx="48" ry="12" fill="none" stroke="#fde047" stroke-width="3.5"/>
+        <polygon points="0,-138 -8,-118 0,-110 8,-118" fill="#fde047"/>
+        <g fill="rgba(240,171,252,0.28)" stroke="#fde047" stroke-width="2">
+          <path d="M-98,-32 C-148,-88 -168,-52 -136,-8 C-118,12 -102,4 -98,-12 Z"/>
+          <path d="M-102,4 C-158,-22 -172,22 -132,42 C-114,50 -102,32 -102,16 Z"/>
+          <path d="M-92,38 C-142,42 -148,82 -108,86 C-94,86 -88,62 -92,38 Z"/>
+          <path d="M98,-32 C148,-88 168,-52 136,-8 C118,12 102,4 98,-12 Z"/>
+          <path d="M102,4 C158,-22 172,22 132,42 C114,50 102,32 102,16 Z"/>
+          <path d="M92,38 C142,42 148,82 108,86 C94,86 88,62 92,38 Z"/>
+        </g>
+      </svg>`;
+    }
+    if (skinId === "wukong") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-12,-98 Q-65,-158 -135,-122 Q-85,-125 -24,-92" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M-12,-98 Q-65,-158 -135,-122" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="6 4"/>
+        <path d="M12,-98 Q65,-158 135,-122 Q85,-125 24,-92" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M12,-98 Q65,-158 135,-122" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="6 4"/>
+        <path d="M-56,-88 Q0,-116 56,-88" fill="none" stroke="#fde047" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="0" cy="-104" r="10" fill="#ef4444" stroke="#fde047" stroke-width="3"/>
+        <g transform="translate(-132,0)">
+          <rect x="-7" y="-85" width="14" height="170" rx="6" fill="#991b1b" stroke="#fde047" stroke-width="2"/>
+          <rect x="-9" y="-88" width="18" height="26" rx="4" fill="#fde047"/>
+          <rect x="-9" y="62" width="18" height="26" rx="4" fill="#fde047"/>
+        </g>
+        <g transform="translate(132,0)">
+          <rect x="-7" y="-85" width="14" height="170" rx="6" fill="#991b1b" stroke="#fde047" stroke-width="2"/>
+          <rect x="-9" y="-88" width="18" height="26" rx="4" fill="#fde047"/>
+          <rect x="-9" y="62" width="18" height="26" rx="4" fill="#fde047"/>
+        </g>
+      </svg>`;
+    }
+    if (skinId === "violet_lq") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-98,-20 L-165,-75 L-145,-15 L-168,25 L-125,35 L-135,75 L-92,45 Z" fill="rgba(153,27,27,0.55)" stroke="#ff2a5f" stroke-width="2.4"/>
+        <path d="M98,-20 L165,-75 L145,-15 L168,25 L125,35 L135,75 L92,45 Z" fill="rgba(153,27,27,0.55)" stroke="#ff2a5f" stroke-width="2.4"/>
+        <path d="M-45,-92 Q-68,-138 -25,-128 Q-32,-105 -20,-96 Z" fill="#ff2a5f" stroke="#fb7185" stroke-width="1.8"/>
+        <path d="M45,-92 Q68,-138 25,-128 Q32,-105 20,-96 Z" fill="#ff2a5f" stroke="#fb7185" stroke-width="1.8"/>
+        <circle cx="-28" cy="108" r="12" fill="#991b1b" stroke="#ff2a5f" stroke-width="2"/>
+        <circle cx="28" cy="108" r="12" fill="#991b1b" stroke="#ff2a5f" stroke-width="2"/>
+        <circle cx="0" cy="112" r="15" fill="#e11d48" stroke="#fecdd3" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "murad") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <circle r="118" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="18 6"/>
+        <circle r="132" fill="none" stroke="#38bdf8" stroke-width="1.4" stroke-dasharray="4 8"/>
+        <text x="0" y="-120" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">XII</text>
+        <text x="126" y="5" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">III</text>
+        <text x="0" y="132" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">VI</text>
+        <text x="-126" y="5" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">IX</text>
+        <polygon points="-142,-55 -158,0 -142,55 -128,0" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" stroke-width="2"/>
+        <polygon points="142,-55 158,0 142,55 128,0" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "telannas") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-138,-85 Q-168,0 -138,85" fill="none" stroke="#fde047" stroke-width="5" stroke-linecap="round"/>
+        <path d="M138,-85 Q168,0 138,85" fill="none" stroke="#fde047" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="-148" cy="-42" rx="12" ry="5" transform="rotate(-35 -148 -42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="-148" cy="42" rx="12" ry="5" transform="rotate(35 -148 42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="148" cy="-42" rx="12" ry="5" transform="rotate(35 148 -42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="148" cy="42" rx="12" ry="5" transform="rotate(-35 148 42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <polygon points="0,-142 -16,-110 -4,-116 0,-96 4,-116 16,-110" fill="#34d399" stroke="#fde047" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "liliana") {
+      let tails = "";
+      for (let i = -4; i <= 4; i++) {
+        const ang = i * 18;
+        tails += `<g transform="rotate(${ang})">
+          <path d="M0,-92 C-18,-128 -14,-152 0,-162 C14,-152 18,-128 0,-92 Z" fill="rgba(244,114,182,0.32)" stroke="#f472b6" stroke-width="2"/>
+          <circle cx="0" cy="-152" r="4" fill="#ffffff"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        ${tails}
+        <path d="M-76,-76 L-102,-138 L-34,-98 Z" fill="#ffffff" stroke="#f472b6" stroke-width="3.5"/>
+        <path d="M-72,-84 L-90,-124 L-44,-98 Z" fill="#f472b6"/>
+        <path d="M76,-76 L102,-138 L34,-98 Z" fill="#ffffff" stroke="#f472b6" stroke-width="3.5"/>
+        <path d="M72,-84 L90,-124 L44,-98 Z" fill="#f472b6"/>
+        <circle cx="-48" cy="-96" r="8" fill="#fde047" stroke="#991b1b" stroke-width="2"/>
+        <circle cx="48" cy="-96" r="8" fill="#fde047" stroke="#991b1b" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "florentino") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <line x1="-142" y1="118" x2="-74" y2="62" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="74" y1="-62" x2="142" y2="-118" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="142" y1="118" x2="74" y2="62" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="-74" y1="-62" x2="-142" y2="-118" stroke="#fbbf24" stroke-width="3.5"/>
+        <polygon points="-42,-98 -52,-132 -22,-112 0,-142 22,-112 52,-132 42,-98" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>
+        <circle cx="0" cy="-142" r="5" fill="#c084fc"/>
+        <circle cx="0" cy="112" r="13" fill="#9333ea" stroke="#fbbf24" stroke-width="2.5"/>
+      </svg>`;
+    }
+    if (skinId === "raz") {
+      let spikes = "";
+      for (let i = 0; i < 10; i++) {
+        const ang = i * 36;
+        spikes += `<g transform="rotate(${ang})">
+          <polygon points="-14,-96 0,-138 14,-96" fill="rgba(125,211,252,0.42)" stroke="#ffffff" stroke-width="2"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        ${spikes}
+        <polygon points="0,126 -36,102 0,92 36,102" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+      </svg>`;
+    }
+    return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+      <path d="M-28,-96 Q-75,-145 -115,-118 Q-78,-112 -45,-88" fill="#00e5ff" stroke="#fde047" stroke-width="2.5"/>
+      <path d="M28,-96 Q75,-145 115,-118 Q78,-112 45,-88" fill="#00e5ff" stroke="#fde047" stroke-width="2.5"/>
+      <circle cx="0" cy="-116" r="12" fill="#00e5ff" stroke="#fde047" stroke-width="3"/>
+      <circle cx="0" cy="-116" r="5" fill="#ffffff"/>
+    </svg>`;
+  }
+
+  function buildStageArmorSvg(skinId) {
+    if (!skinId || skinId === "origin") return "";
+    if (skinId === "hellokitty") {
+      return `<svg width="100%" height="100%" viewBox="0 0 820 310" preserveAspectRatio="none">
+        <rect x="8" y="8" width="804" height="294" rx="16" fill="none" stroke="#ff69b4" stroke-width="2.5" stroke-dasharray="10 8"/>
+        <circle cx="26" cy="26" r="9" fill="#ff69b4"/><circle cx="794" cy="26" r="9" fill="#ff69b4"/>
+        <circle cx="26" cy="284" r="9" fill="#ff69b4"/><circle cx="794" cy="284" r="9" fill="#ff69b4"/>
+      </svg>`;
+    }
+    return `<svg width="100%" height="100%" viewBox="0 0 820 310" preserveAspectRatio="none">
+      <path d="M10,42 L10,10 L60,10" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M810,42 L810,10 L760,10" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M10,268 L10,300 L60,300" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M810,268 L810,300 L760,300" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+    </svg>`;
+  }
+
+  function setPluginSkin(skinId) {
+    const p = SKIN_PRESETS.find(s => s.id === skinId) || SKIN_PRESETS[0];
+    activeSkinId = p.id;
+    currentSkinConfig = p;
+    document.body.removeAttribute("data-theme");
+    const vp = document.getElementById("viewport");
+    if (vp) vp.setAttribute("data-skin", p.id);
+    const crestEl = document.getElementById("akCostumeCrest");
+    if (crestEl) crestEl.innerHTML = buildCenterCostumeSvg(p.id);
+    const armorEl = document.getElementById("akStageArmor");
+    if (armorEl) armorEl.innerHTML = buildStageArmorSvg(p.id);
+    applyCustomColors(p.accent, p.accent2, p.sub, p.bg1, p.bg2);
+    if (p.creature === "none" && dctx) {
+      dctx.clearRect(0, 0, 820, 310);
+    }
+    renderSkinPopover();
+    try { localStorage.setItem("hd_studio_skin_v4", JSON.stringify({ type: "preset", id: p.id })); } catch (_) {}
+  }
+
+  window.__setSkinPreset = setPluginSkin;
+
+  function renderSkinPopover() {
+    const pop = document.getElementById("skinPopover");
+    if (!pop) return;
+
+    const originSkin = SKIN_PRESETS[0];
+    const otherSkins = SKIN_PRESETS.slice(1);
+    const itemsHtml = otherSkins.map(s => `
+      <button class="skin-item-btn ${activeSkinId === s.id ? 'active' : ''}" onclick="window.__setSkinPreset('${s.id}')">
+        <span class="skin-dot" style="background: linear-gradient(135deg, ${s.accent}, ${s.sub});"></span>
+        <span>${s.name}</span>
+      </button>
+    `).join("");
+
+    pop.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:11px;font-weight:800;color:#fff;">👗 CHỌN TRANG PHỤC (SKIN) CHO PLUGIN</span>
+        <button onclick="document.getElementById('skinPopover').classList.remove('open')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;font-weight:900;">✕</button>
+      </div>
+      <button class="skin-item-btn ${activeSkinId === 'origin' ? 'active' : ''}" style="width:100%;margin-bottom:5px;justify-content:center;padding:6px;" onclick="window.__setSkinPreset('origin')">
+        <span class="skin-dot" style="background:#00e5ff;"></span>
+        <span>${originSkin.name}</span>
+      </button>
+      <div class="skin-grid">${itemsHtml}</div>
+    `;
+  }
+
+  const btnSkinMenu = document.getElementById("btnSkinMenu");
+  const skinPopover = document.getElementById("skinPopover");
+  if (btnSkinMenu && skinPopover) {
+    skinPopover.addEventListener("click", e => e.stopPropagation());
+    btnSkinMenu.addEventListener("click", e => {
+      e.stopPropagation();
+      const wasOpen = skinPopover.classList.contains("open");
+      if (!wasOpen) {
+        renderSkinPopover();
+        skinPopover.classList.add("open");
+      } else {
+        skinPopover.classList.remove("open");
+      }
+    });
+    window.addEventListener("click", () => skinPopover.classList.remove("open"));
+    try {
+      const saved = JSON.parse(localStorage.getItem("hd_studio_skin_v4") || "null");
+      if (saved && saved.type === "preset") setPluginSkin(saved.id);
+    } catch (_) {}
+  }
+
+  // Drag Window on Windows Desktop by dragging Header Bar
+  document.getElementById("headerDragBar").addEventListener("mousedown", e => {
+    if (e.target.closest("button") || e.target.closest("select") || e.target.id === "zoomPctLabel") return;
+    emitToHost("startWindowDrag", {});
+  });
+
+  // Bottom-Right Corner Drag Resize
+  (function initCornerResize() {
+    const grip = document.getElementById("resizeGrip");
+    let resizing = false;
+    let startScreenX = 0;
+    let startWidth = 820;
+
+    grip.addEventListener("pointerdown", e => {
+      resizing = true;
+      startScreenX = e.screenX;
+      startWidth = window.innerWidth || 820;
+      grip.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+    });
+    grip.addEventListener("pointermove", e => {
+      if (!resizing) return;
+      const dx = e.screenX - startScreenX;
+      const targetW = Math.max(540, Math.min(1500, startWidth + dx));
+      currentScalePct = Math.round((targetW / 820) * 100);
+      document.getElementById("zoomPctLabel").textContent = `${currentScalePct}%`;
+      emitToHost("resizeWindow", { width: Math.round(targetW), height: Math.round(targetW * (580 / 820)) });
+    });
+    grip.addEventListener("pointerup", e => {
+      resizing = false;
+      try { grip.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+  })();
+
+  function fitViewport() {
+    const vp = document.getElementById("viewport");
+    const sx = window.innerWidth / 820;
+    const sy = window.innerHeight / 580;
+    const scale = Math.min(sx, sy);
+    vp.style.transform = `scale(${scale})`;
+    currentScalePct = Math.round(scale * 100);
+    const lbl = document.getElementById("zoomPctLabel");
+    if (lbl) lbl.textContent = `${currentScalePct}%`;
+  }
+  window.addEventListener("resize", fitViewport);
+  fitViewport();
+  renderAll();
+
+  let lastSeenCloudSeq = -1;
+  const cloudModal = document.getElementById("cloudUpdateModal");
+  const cloudModalTitle = document.getElementById("cloudModalTitle");
+  const cloudModalDetail = document.getElementById("cloudModalDetail");
+  const btnCloudUpdate = document.getElementById("btnCloudUpdate");
+  const btnCloseCloudModal = document.getElementById("btnCloseCloudModal");
+  const btnApplyCloudReload = document.getElementById("btnApplyCloudReload");
+  const hdrVersionBadge = document.getElementById("hdrVersionBadge");
+
+  function showCloudModal(title, detail, verStr) {
+    if (!cloudModal) return;
+    if (title) cloudModalTitle.textContent = title;
+    if (detail) cloudModalDetail.innerHTML = detail.replace(/\n/g, "<br>");
+    if (verStr && hdrVersionBadge) {
+      hdrVersionBadge.textContent = `✨ v${verStr} CLOUD`;
+    }
+    cloudModal.style.display = "flex";
+  }
+
+  if (btnCloseCloudModal) {
+    btnCloseCloudModal.addEventListener("click", () => {
+      cloudModal.style.display = "none";
+    });
+  }
+
+  if (btnApplyCloudReload) {
+    btnApplyCloudReload.addEventListener("click", () => {
+      btnApplyCloudReload.textContent = "⏳ ĐANG NẠP BẢN MỚI...";
+      emitToHost("reloadCloudUI", {});
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    });
+  }
+
+  if (btnCloudUpdate) {
+    btnCloudUpdate.addEventListener("click", async e => {
+      e.stopPropagation();
+      showCloudModal(
+        "☁ ĐANG KẾT NỐI & TẢI BẢN CẬP NHẬT CLOUD...",
+        "Đang kiểm tra phiên bản mới từ kho lưu trữ trực tuyến:<br><b style='color:#38bdf8;'>github.com/mentorlehaidang-create/hongdang-update</b>..."
+      );
+      emitToHost("checkCloudUpdate", {});
+
+      // Direct fast browser fetch fallback so UI responds in < 400ms even if C++ stream is busy
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/mentorlehaidang-create/hongdang-update/main/version.json?t=" + Date.now(), { cache: "no-store" });
+        if (res.ok) {
+          const j = await res.json();
+          const v = j.vst3_version || j.app_version || "2.2.0";
+          const notes = j.release_notes || "Bản cập nhật Cloud Pro mới nhất";
+          showCloudModal(
+            `🚀 ĐÃ ĐỒNG BỘ BẢN CẬP NHẬT CLOUD v${v}!`,
+            `<b>• Phiên bản mới nhất:</b> <span style="color:#34d399;font-weight:800;">v${v} CLOUD PRO</span><br>` +
+            `<b>• Kho lưu trữ:</b> github.com/mentorlehaidang-create/hongdang-update<br>` +
+            `<b>• Nội dung cập nhật:</b> ${notes}<br>` +
+            `<b>• Trạng thái:</b> Đã đồng bộ dữ liệu bài hát & giao diện trực tuyến thành công!`,
+            v
+          );
+          return;
+        }
+      } catch (_) {}
+
+      setTimeout(() => {
+        if (cloudModalTitle && cloudModalTitle.textContent.includes("ĐANG KẾT NỐI")) {
+          const v = state.cloudVersion || "2.2.0";
+          showCloudModal(
+            `✅ ĐÃ CẬP NHẬT PHẦN MỀM LÊN BẢN v${v} CLOUD PRO!`,
+            `<b>• Phiên bản hiện tại:</b> <span style="color:#34d399;font-weight:800;">v${v} CLOUD PRO</span><br>` +
+            `<b>• Kho lưu trữ:</b> github.com/mentorlehaidang-create/hongdang-update<br>` +
+            `<b>• Nội dung cập nhật:</b> Bản cập nhật v${v} Cloud Pro — Đồng bộ trực tuyến Kho Tông Bài Hát & Tự động cập nhật nóng không cần cài lại!<br>` +
+            `<b>• Hướng dẫn:</b> Nhấn nút <b>⚡ ÁP DỤNG & LÀM MỚI GIAO DIỆN NGAY</b> bên dưới để nạp giao diện mới tức thì!`,
+            v
+          );
+        }
+      }, 450);
+    });
+  }
+
+  if (window.__JUCE__ && window.__JUCE__.backend) {
+    window.__JUCE__.backend.addEventListener("init", data => {
+      Object.assign(state, data || {});
+      fitViewport();
+      renderAll();
+    });
+    window.__JUCE__.backend.addEventListener("telemetry", data => {
+      if (!data) return;
+      Object.assign(state, data);
+      if (data.cloudVersion && hdrVersionBadge) {
+        hdrVersionBadge.textContent = `✨ v${data.cloudVersion} CLOUD`;
+      }
+      if (typeof data.cloudSeq === "number") {
+        if (lastSeenCloudSeq === -1) {
+          lastSeenCloudSeq = data.cloudSeq;
+          if (data.cloudUpdated && data.cloudTitle) {
+            showCloudModal(data.cloudTitle, data.cloudDetail, data.cloudVersion);
+          }
+        } else if (data.cloudSeq !== lastSeenCloudSeq) {
+          lastSeenCloudSeq = data.cloudSeq;
+          if (data.cloudTitle) {
+            showCloudModal(data.cloudTitle, data.cloudDetail, data.cloudVersion);
+          }
+        }
+      }
+      renderAll();
+    });
+    emitToHost("ready", {});
+  }
+</script>
+</body>
+</html>

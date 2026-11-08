@@ -1,0 +1,2465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>HD TUNE</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg-dark: #070b14;
+    --bg-panel: #0e1626;
+    --gold-bright: #00e5ff;
+    --gold-mid: #38bdf8;
+    --gold-dim: #6366f1;
+    --amber-arc: #00e5ff;
+    --text-main: #ffffff;
+    --text-sub: #cbd5e1;
+    --border-warm: rgba(56, 189, 248, 0.28);
+  }
+  .skin-popover {
+    position: absolute;
+    top: 40px;
+    right: 18px;
+    width: 320px;
+    background: rgba(11, 15, 25, 0.97);
+    border: 1.5px solid var(--gold-bright);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 100;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.92), 0 0 22px rgba(0, 229, 255, 0.35);
+    display: none;
+  }
+  .skin-popover.open {
+    display: block;
+  }
+  .skin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    max-height: 210px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .skin-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(20, 29, 47, 0.85);
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .skin-item-btn:hover, .skin-item-btn.active {
+    border-color: var(--gold-bright);
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .skin-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.65);
+  }
+  * {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+  }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-dark);
+    font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    color: var(--text-main);
+  }
+  #viewport {
+    position: relative;
+    width: 960px;
+    height: 630px;
+    transform-origin: top left;
+    background:
+      radial-gradient(ellipse at 50% 42%, rgba(0, 229, 255, 0.08) 0%, transparent 62%),
+      radial-gradient(ellipse at 50% 25%, var(--bg-panel) 0%, var(--bg-dark) 75%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--border-warm);
+  }
+
+  /* Header Bar */
+  .header-bar {
+    position: relative;
+    height: 42px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #151e31 0%, #0b101d 100%);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+    letter-spacing: 0.3px;
+    z-index: 2;
+  }
+  .brand-left span {
+    color: #ffffff !important;
+  }
+  .plugin-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 14px rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .plugin-title span {
+    color: #ffffff !important;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    z-index: 2;
+  }
+  .hdr-tool-btn {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 5px;
+    border: 1px solid #334155;
+    background: rgba(15, 23, 42, 0.88);
+    color: #cbd5e1;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.12s ease;
+  }
+  .hdr-tool-btn:hover {
+    border-color: var(--gold-bright);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.28);
+  }
+  .hdr-tool-btn.active {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.28) 0%, #0f172a 100%);
+    border: 1.5px solid var(--gold-bright);
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.32);
+  }
+  .resize-corner-grip {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 18px;
+    height: 18px;
+    cursor: nwse-resize;
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    opacity: 0.7;
+  }
+  .resize-corner-grip:hover {
+    opacity: 1;
+  }
+
+  /* Top Control Strip */
+  .top-strip {
+    height: 78px;
+    padding: 6px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    background: rgba(10, 15, 27, 0.76);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  }
+  .top-left-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .top-right-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .mini-knob-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    gap: 2px;
+  }
+  .mini-label {
+    width: 100%;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .mini-val {
+    width: 100%;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #f1f5f9;
+    white-space: nowrap;
+  }
+  .select-box {
+    color-scheme: dark;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #0e1626;
+    background-image: linear-gradient(45deg, transparent 50%, var(--gold-bright) 50%),
+                      linear-gradient(135deg, var(--gold-bright) 50%, transparent 50%),
+                      linear-gradient(180deg, #162238 0%, #0b1120 100%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%, 0 0;
+    background-size: 5px 5px, 5px 5px, 100% 100%;
+    background-repeat: no-repeat;
+    color: #ffffff;
+    border: 1.5px solid #334155;
+    border-radius: 6px;
+    padding: 6px 26px 6px 11px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+  }
+  .select-box option {
+    background-color: #0e1626;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 6px 10px;
+  }
+  .select-box:hover, .select-box:focus {
+    border-color: var(--gold-bright);
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+  }
+  .chk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #cbd5e1;
+    cursor: pointer;
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.12s ease;
+  }
+  .chk-pill.active {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.22) 0%, rgba(15, 23, 42, 0.92) 100%);
+    border-color: rgba(0, 229, 255, 0.55);
+    color: #ffffff;
+  }
+  .chk-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid #475569;
+    background: #0b1120;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s ease;
+  }
+  .chk-pill.active .chk-box {
+    background: #0e1626;
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+  }
+  .chk-box svg {
+    width: 11px;
+    height: 11px;
+    stroke: #ffffff;
+    stroke-width: 2.6;
+    fill: none;
+    opacity: 0;
+  }
+  .chk-pill.active .chk-box svg {
+    opacity: 1;
+  }
+
+  /* Center Main Stage */
+  .knob-svg {
+    filter: drop-shadow(0 0 12px var(--gold-bright)) drop-shadow(0 0 24px rgba(0, 229, 255, 0.32));
+  }
+  .main-stage {
+    flex: 1;
+    position: relative;
+    display: grid;
+    grid-template-columns: 270px 1fr 270px;
+    align-items: center;
+    padding: 6px 26px;
+  }
+  .side-column {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+     justify-content: space-around;
+  }
+  .side-column.left .knob-block:nth-child(1) {
+    align-self: flex-start;
+    margin-left: 16px;
+  }
+  .side-column.left .knob-block:nth-child(2) {
+    align-self: flex-end;
+    margin-right: 12px;
+  }
+  .side-column.right .knob-block:nth-child(1) {
+    align-self: flex-end;
+    margin-right: 16px;
+  }
+  .side-column.right .knob-block:nth-child(2) {
+    align-self: flex-start;
+    margin-left: 12px;
+  }
+  .knob-block {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .knob-title {
+    position: relative;
+    z-index: 30;
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: rgba(5, 8, 17, 0.90);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #000000;
+    text-transform: uppercase;
+  }
+  .knob-readout {
+    position: relative;
+    z-index: 30;
+    display: inline-block;
+    min-width: 42px;
+    padding: 1px 8px;
+    border-radius: 4px;
+    background: rgba(5, 8, 17, 0.92);
+    border: 1px solid var(--gold-bright);
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #000000;
+  }
+  .knob-svg {
+    cursor: ns-resize;
+    overflow: visible;
+  }
+
+  /* Center Pitch Gauge + Butterfly Key Badge */
+  .center-gauge-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .pitch-wheel-wrap {
+    position: relative;
+    width: 224px;
+    height: 224px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pitch-note-readout {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .pitch-note-name {
+    font-size: 68px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 22px rgba(0, 229, 255, 0.45);
+  }
+  .pitch-cents-text {
+    margin-top: 26px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold-bright);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  }
+  .butterfly-badge {
+    margin-top: -8px;
+    position: relative;
+    width: 174px;
+    height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .butterfly-key-letter {
+    position: absolute;
+    font-size: 36px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 14px rgba(0, 229, 255, 0.85);
+    pointer-events: none;
+    transform: translateY(4px);
+  }
+
+  /* Bottom Toolbar Bar */
+  .bottom-bar {
+    height: 40px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(8, 12, 22, 0.88);
+    border-top: 1px solid rgba(148, 163, 184, 0.14);
+  }
+  .bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .preset-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #f8fafc;
+  }
+  .nav-arrow {
+    cursor: pointer;
+    color: var(--gold-bright);
+    font-size: 16px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .nav-arrow:hover {
+    color: #ffffff;
+    background: rgba(0, 229, 255, 0.15);
+  }
+  .bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .throat-slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+  input[type=range].warm-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 68px;
+    height: 5px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--gold-bright) 0%, #1e293b 100%);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range].warm-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold-bright);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 8px var(--gold-bright);
+  }
+
+  /* 6-Octave Piano Keyboard */
+  .piano-strip {
+    height: 76px;
+    padding: 4px 12px 8px 12px;
+    background: #050811;
+    border-top: 1px solid rgba(148, 163, 184, 0.16);
+    position: relative;
+  }
+  .piano-keys {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 2px;
+  }
+  .white-key {
+    flex: 1;
+    height: 100%;
+    border-radius: 2px 2px 4px 4px;
+    background: linear-gradient(180deg, #334155 0%, #475569 62%, #1e293b 100%);
+    border: 1px solid #090d16;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.1s;
+  }
+  .white-key.in-scale {
+    background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 56%, var(--gold-mid) 57%, var(--gold-bright) 100%);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.22);
+  }
+  .white-key.root-key {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 54%, var(--gold-dim) 55%, var(--gold-bright) 100%);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+  }
+  .white-key.active-sung {
+    box-shadow: inset 0 0 0 2px #fff, 0 0 14px var(--gold-bright);
+  }
+  .black-key {
+    position: absolute;
+    top: 0;
+    width: 1.55%;
+    height: 60%;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 70%, #090d16 100%);
+    border: 1px solid #020617;
+    z-index: 3;
+    cursor: pointer;
+    transform: translateX(-50%);
+  }
+  .black-key.in-scale {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 62%, var(--gold-bright) 63%, var(--gold-dim) 100%);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+  }
+  .black-key.root-key {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 60%, #ffffff 61%, var(--gold-bright) 100%);
+  }
+
+  /* ===================================================================== */
+  /* FULL GAME COSTUME ("TRANG PHỤC") SKIN TRANSFORMATION SYSTEM           */
+  /* ===================================================================== */
+  .stage-armor-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+  }
+  .costume-crest-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 340px;
+    height: 310px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 1. HELLO KITTY KAWAII PASTEL PINK STUDIO OUTFIT */
+  #viewport[data-skin="hellokitty"] {
+    background:
+      radial-gradient(circle at 20% 25%, rgba(255,255,255,0.55) 2px, transparent 3px) 0 0 / 28px 28px,
+      radial-gradient(circle at 75% 70%, rgba(255,105,180,0.22) 2.5px, transparent 3.5px) 0 0 / 28px 28px,
+      linear-gradient(180deg, #ffeef5 0%, #ffc6de 55%, #ffa6ca 100%) !important;
+    border: 3px solid #ff69b4 !important;
+  }
+  #viewport[data-skin="hellokitty"] .header-bar,
+  #viewport[data-skin="hellokitty"] .bottom-bar {
+    background: linear-gradient(180deg, #ff7eb9 0%, #ff529a 100%) !important;
+    border-color: #ffffff !important;
+  }
+  #viewport[data-skin="hellokitty"] .top-strip {
+    background: rgba(255, 240, 246, 0.88) !important;
+    border-bottom: 2px solid #ffb3d1 !important;
+  }
+  #viewport[data-skin="hellokitty"] .knob-title,
+  #viewport[data-skin="hellokitty"] .knob-readout,
+  #viewport[data-skin="hellokitty"] .mini-label,
+  #viewport[data-skin="hellokitty"] .mini-val {
+    background: #ffffff !important;
+    color: #d61f69 !important;
+    border: 1.5px solid #ff69b4 !important;
+    text-shadow: none !important;
+    border-radius: 999px !important;
+  }
+  #viewport[data-skin="hellokitty"] .select-box,
+  #viewport[data-skin="hellokitty"] .hdr-tool-btn {
+    background: #ffffff !important;
+    color: #d61f69 !important;
+    border: 1.5px solid #ff69b4 !important;
+    border-radius: 999px !important;
+    text-shadow: none !important;
+  }
+  #viewport[data-skin="hellokitty"] .hdr-tool-btn.active {
+    background: linear-gradient(180deg, #ff69b4 0%, #ff1493 100%) !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+  #viewport[data-skin="hellokitty"] .piano-strip {
+    background: #ffd1e6 !important;
+    border-top: 2px solid #ff69b4 !important;
+  }
+  #viewport[data-skin="hellokitty"] .white-key {
+    background: linear-gradient(180deg, #ffffff 0%, #fff0f6 70%, #ffc2dc 100%) !important;
+  }
+  #viewport[data-skin="hellokitty"] .white-key.in-scale {
+    background: linear-gradient(180deg, #ffffff 0%, #ff9ec7 58%, #ff529a 100%) !important;
+  }
+  #viewport[data-skin="hellokitty"] .black-key {
+    background: linear-gradient(180deg, #ff69b4 0%, #d61f69 100%) !important;
+    border-color: #ffffff !important;
+  }
+
+  /* 2. NAKROTH THỨ NGUYÊN VỆ THẦN (ANIME MECHA CYBER HUD) */
+  #viewport[data-skin="nakroth"] {
+    background:
+      linear-gradient(90deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(0deg, rgba(0, 240, 255, 0.07) 1px, transparent 1px) 0 0 / 24px 24px,
+      radial-gradient(ellipse at 50% 30%, #0d2247 0%, #050b18 75%) !important;
+    border: 2px solid #00f0ff !important;
+  }
+  #viewport[data-skin="nakroth"] .knob-title,
+  #viewport[data-skin="nakroth"] .knob-readout {
+    background: linear-gradient(135deg, #06152d 0%, #0f2942 100%) !important;
+    border: 1px solid #fde047 !important;
+    color: #00f0ff !important;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  }
+
+  /* 3. TULEN THẦN SỨ ST-L79 */
+  #viewport[data-skin="tulen"] {
+    background:
+      repeating-linear-gradient(45deg, rgba(251, 191, 36, 0.05) 0px, rgba(251, 191, 36, 0.05) 2px, transparent 2px, transparent 18px),
+      radial-gradient(ellipse at 50% 25%, #3b280a 0%, #171005 68%, #090602 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 4. LAURIEL THỨ NGUYÊN THÁNH NỮ */
+  #viewport[data-skin="lauriel"] {
+    background:
+      radial-gradient(circle at 50% 10%, rgba(253, 224, 71, 0.16) 0%, transparent 48%),
+      radial-gradient(ellipse at 50% 45%, #33104f 0%, #160726 70%, #0a0312 100%) !important;
+    border: 2px solid #f0abfc !important;
+  }
+
+  /* 5. NGỘ KHÔNG TỀ THIÊN VÕ THÁNH */
+  #viewport[data-skin="wukong"] {
+    background:
+      radial-gradient(circle at 50% 85%, rgba(239, 68, 68, 0.24) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 25%, #3d1405 0%, #1c0802 70%, #0d0301 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 6. VIOLET HUYẾT MA THẦN */
+  #viewport[data-skin="violet_lq"] {
+    background:
+      repeating-linear-gradient(-45deg, rgba(255, 42, 95, 0.06) 0px, rgba(255, 42, 95, 0.06) 2px, transparent 2px, transparent 20px),
+      radial-gradient(ellipse at 50% 35%, #3b0714 0%, #170308 70%, #0a0103 100%) !important;
+    border: 2px solid #ff2a5f !important;
+  }
+
+  /* 7. MURAD SIÊU VIỆT VŨ TRỤ */
+  #viewport[data-skin="murad"] {
+    background:
+      radial-gradient(circle at 18% 30%, rgba(255,255,255,0.6) 1px, transparent 2px) 0 0 / 50px 50px,
+      radial-gradient(circle at 82% 65%, rgba(56,189,248,0.6) 1.5px, transparent 2.5px) 0 0 / 60px 60px,
+      radial-gradient(ellipse at 50% 40%, #1c1954 0%, #0b0926 70%, #040312 100%) !important;
+    border: 2px solid #818cf8 !important;
+  }
+
+  /* 8. TEL'ANNAS LƯỠNG NGHI LONG HẬU */
+  #viewport[data-skin="telannas"] {
+    background:
+      radial-gradient(circle at 50% 20%, rgba(253, 224, 71, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 40%, #09362e 0%, #041a16 72%, #020d0b 100%) !important;
+    border: 2px solid #10b981 !important;
+  }
+
+  /* 9. LILIANA NGUYỆT MỊ LY */
+  #viewport[data-skin="liliana"] {
+    background:
+      radial-gradient(circle at 50% 15%, rgba(244, 114, 182, 0.2) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 45%, #380e3b 0%, #19051c 72%, #0b020d 100%) !important;
+    border: 2px solid #f472b6 !important;
+  }
+
+  /* 10. FLORENTINO TINH HỆ KIẾM THÁNH */
+  #viewport[data-skin="florentino"] {
+    background:
+      radial-gradient(circle at 50% 25%, rgba(251, 191, 36, 0.16) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 45%, #27104a 0%, #110624 72%, #070212 100%) !important;
+    border: 2px solid #fbbf24 !important;
+  }
+
+  /* 11. RAZ BĂNG QUYỀN QUÁN QUÂN */
+  #viewport[data-skin="raz"] {
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 35%, #0f3156 0%, #07192e 72%, #030b17 100%) !important;
+    border: 2px solid #7dd3fc !important;
+  }
+
+  /* 12. THANH LONG CHÍ TÔN */
+  #viewport[data-skin="cyan"] {
+    background:
+      radial-gradient(circle at 50% 25%, rgba(0, 229, 255, 0.16) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 40%, #0a2936 0%, #05131c 72%, #02080d 100%) !important;
+    border: 2px solid #00e5ff !important;
+  }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <!-- HEADER -->
+  <div class="header-bar">
+    <div class="brand-left">
+      <svg width="26" height="20" viewBox="0 0 36 28" fill="none">
+        <path d="M18 14C13 4 2 3 3 12C4 18 12 18 18 15C12 19 5 24 9 26C13 28 17 22 18 16C19 22 23 28 27 26C31 24 24 19 18 15C24 18 32 18 33 12C34 3 23 4 18 14Z" stroke="var(--gold-bright)" stroke-width="1.8" fill="rgba(0,229,255,0.22)"/>
+      </svg>
+      <span>HD Studio</span>
+      <span id="hdrVersionBadge" style="font-size:10.5px;font-weight:900;padding:2px 7px;border-radius:999px;background:linear-gradient(90deg,#10b981,#059669);color:#ffffff;border:1px solid #6ee7b7;box-shadow:0 0 10px rgba(16,185,129,0.55);letter-spacing:0.4px;">✨ v2.2.0 CLOUD</span>
+    </div>
+    <div class="plugin-title" style="left:44%;">HD <span>TUNE</span></div>
+    <div class="header-right">
+      <button class="hdr-tool-btn active" id="btnCloudUpdate" title="Kiểm tra & Cập nhật phần mềm trực tuyến từ Cloud Hồng Đăng Studio" style="border-color:#10b981;color:#ecfdf5;background:linear-gradient(180deg,rgba(16,185,129,0.42) 0%,#064e3b 100%);box-shadow:0 0 12px rgba(16,185,129,0.45);">
+        <span>☁ Cập Nhật</span>
+      </button>
+      <button class="hdr-tool-btn active" id="btnSkinMenu" title="Chọn Skin Liên Quân, Hello Kitty & Đổi Màu Tùy Ý">
+        <span class="skin-dot" id="activeSkinDot" style="background: var(--gold-bright);"></span>
+        <span>🎨 Skin</span>
+      </button>
+      <button class="hdr-tool-btn" id="btnZoomOut" title="Thu nhỏ giao diện (-)">−</button>
+      <span id="zoomPctLabel" style="font-size:11.5px; min-width:36px; text-align:center; cursor:pointer;" title="Nhấn để về 100%">100%</span>
+      <button class="hdr-tool-btn" id="btnZoomIn" title="Phóng to giao diện (+)">+</button>
+      <button class="hdr-tool-btn active" id="btnPinTop" title="Ghim cửa sổ luôn nổi (Không tắt khi mở ứng dụng khác)">📌 Ghim</button>
+    </div>
+    <div class="skin-popover" id="skinPopover"></div>
+  </div>
+
+  <!-- TOP CONTROL STRIP -->
+  <div class="top-strip">
+    <div class="top-left-group">
+      <!-- TRACKING -->
+      <div class="mini-knob-col">
+        <div class="mini-label">TRACKING</div>
+        <svg class="knob-svg mini-knob" data-param="tracking" data-min="1" data-max="100" data-step="1" width="32" height="32" viewBox="0 0 40 40"></svg>
+        <div class="mini-val" id="val-tracking">50</div>
+      </div>
+
+      <!-- VOICE TYPE -->
+      <select class="select-box" id="sel-inputType" style="min-width: 132px;">
+        <option value="0">Alto / Tenor</option>
+        <option value="1">Soprano</option>
+        <option value="2">Low Male</option>
+        <option value="3">Instrument</option>
+        <option value="4">Bass</option>
+      </select>
+
+      <!-- KEY -->
+      <select class="select-box" id="sel-key" style="min-width: 68px;">
+        <option value="0">C</option>
+        <option value="1">C#</option>
+        <option value="2">D</option>
+        <option value="3">D#</option>
+        <option value="4">E</option>
+        <option value="5">F</option>
+        <option value="6">F#</option>
+        <option value="7">G</option>
+        <option value="8">G#</option>
+        <option value="9">A</option>
+        <option value="10">A#</option>
+        <option value="11">B</option>
+      </select>
+
+      <!-- SCALE -->
+      <select class="select-box" id="sel-scale" style="min-width: 120px;">
+        <option value="0">Major</option>
+        <option value="1">Minor</option>
+        <option value="2">Dorian</option>
+        <option value="3">Chromatic</option>
+      </select>
+
+      <!-- LiveKey Follow (Tích ngầm tự động, ẩn chữ theo yêu cầu) -->
+      <div class="chk-pill active" id="chk-autoSync" style="display:none;" title="Chỉ nhận Tông từ HD KEY (Không bao giờ tự nhảy Tông khi nói vào Mic)">
+        <span class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span>LiveKey Follow</span>
+      </div>
+
+      <!-- Low Latency (Tích ngầm tự động, ẩn chữ theo yêu cầu) -->
+      <div class="chk-pill active" id="chk-lowLatency" style="display:none;" title="Zero Latency (0.0 ms) - Không trễ tiếng khi hát Live">
+        <span class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span>Low Latency</span>
+      </div>
+    </div>
+
+    <!-- TOP RIGHT MINI KNOBS (1..100) -->
+    <div class="top-right-group">
+      <div class="mini-knob-col">
+        <div class="mini-label">FORMANT</div>
+        <svg class="knob-svg mini-knob" data-param="formant" data-min="1" data-max="100" data-step="1" width="32" height="32" viewBox="0 0 40 40"></svg>
+        <div class="mini-val" id="val-formant">50</div>
+      </div>
+      <div class="mini-knob-col">
+        <div class="mini-label">TRANSPOSE</div>
+        <svg class="knob-svg mini-knob" data-param="transpose" data-min="1" data-max="100" data-step="1" width="32" height="32" viewBox="0 0 40 40"></svg>
+        <div class="mini-val" id="val-transpose">50</div>
+      </div>
+      <div class="mini-knob-col">
+        <div class="mini-label">DETUNE</div>
+        <svg class="knob-svg mini-knob" data-param="detune" data-min="415.0" data-max="465.0" data-step="0.1" width="32" height="32" viewBox="0 0 40 40"></svg>
+        <div class="mini-val" id="val-detune">440.0Hz</div>
+      </div>
+      <div class="mini-knob-col">
+        <div class="mini-label">MIX</div>
+        <svg class="knob-svg mini-knob" data-param="mix" data-min="1" data-max="100" data-step="1" width="32" height="32" viewBox="0 0 40 40"></svg>
+        <div class="mini-val" id="val-mix">100</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN STAGE -->
+  <div class="main-stage">
+    <div class="stage-armor-overlay" id="atStageArmor"></div>
+    <canvas id="atDragonCanvas" width="960" height="360" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:4;"></canvas>
+    <!-- LEFT 2 LARGE KNOBS (1..100) -->
+    <div class="side-column left">
+      <div class="knob-block">
+        <div class="knob-title">RETUNE SPEED</div>
+        <svg class="knob-svg big-knob" data-param="retuneSpeed" data-min="0" data-max="100" data-step="1" data-invert="1" width="128" height="128" viewBox="0 0 128 128"></svg>
+        <div class="knob-readout" id="val-retuneSpeed">20</div>
+      </div>
+      <div class="knob-block">
+        <div class="knob-title">FLEX-TUNE</div>
+        <svg class="knob-svg big-knob" data-param="flexTune" data-min="1" data-max="100" data-step="1" width="128" height="128" viewBox="0 0 128 128"></svg>
+        <div class="knob-readout" id="val-flexTune">20</div>
+      </div>
+    </div>
+
+    <!-- CENTER PITCH WHEEL + CHARACTER COSTUME EMBLEM -->
+    <div class="center-gauge-col">
+      <div class="pitch-wheel-wrap">
+        <div class="costume-crest-overlay" id="atCostumeCrest"></div>
+        <svg width="224" height="224" viewBox="0 0 224 224" style="position:relative; z-index:10;">
+          <defs>
+            <radialGradient id="dialGrad" cx="50%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#1e293b"/>
+              <stop offset="70%" stop-color="#0b1120"/>
+              <stop offset="100%" stop-color="#050811"/>
+            </radialGradient>
+          </defs>
+          <circle cx="112" cy="112" r="102" fill="url(#dialGrad)" stroke="var(--border-warm)" stroke-width="2.2"/>
+          <g id="dialTicks"></g>
+          <!-- Top center reference tick -->
+          <line x1="112" y1="14" x2="112" y2="25" stroke="var(--gold-bright)" stroke-width="2.6" stroke-linecap="round"/>
+          <!-- Live Cents Indicator Pill on Perimeter -->
+          <g id="centsOrbGroup" transform="rotate(0 112 112)">
+            <rect x="109.5" y="13" width="5" height="12" rx="2.5" fill="var(--gold-bright)" filter="drop-shadow(0 0 8px var(--gold-bright))"/>
+          </g>
+        </svg>
+        <div class="pitch-note-readout">
+          <div class="pitch-note-name" id="centerNoteName">C</div>
+          <div class="pitch-cents-text" id="centerCentsText">+0 cents</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT 2 LARGE KNOBS -->
+    <div class="side-column right">
+      <div class="knob-block">
+        <div class="knob-title">HUMANIZE</div>
+        <svg class="knob-svg big-knob" data-param="humanize" data-min="1" data-max="100" data-step="1" width="128" height="128" viewBox="0 0 128 128"></svg>
+        <div class="knob-readout" id="val-humanize">35</div>
+      </div>
+      <div class="knob-block">
+        <div class="knob-title">NAT VIBRATO</div>
+        <svg class="knob-svg big-knob" data-param="natVibrato" data-min="-12.0" data-max="12.0" data-step="0.1" width="128" height="128" viewBox="0 0 128 128"></svg>
+        <div class="knob-readout" id="val-natVibrato">00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM TOOLBAR (Đã ẩn chữ HOLD & Classic theo yêu cầu) -->
+  <div class="bottom-bar">
+    <div class="bottom-left" style="display:none;">
+      <div class="chk-pill" id="chk-hold">
+        <span class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span>HOLD</span>
+      </div>
+      <div class="chk-pill" id="chk-classic" title="Chế độ Auto-Tune 5 Classic vs Auto-Tune Pro X Modern">
+        <span class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
+        <span>Classic</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6-OCTAVE INTERACTIVE PIANO KEYBOARD -->
+  <div class="piano-strip">
+    <div class="piano-keys" id="pianoContainer"></div>
+  </div>
+
+  <!-- BOTTOM-RIGHT RESIZE GRIP -->
+  <div class="resize-corner-grip" id="resizeGrip" title="Kéo để phóng to / thu nhỏ plugin">
+    <svg width="14" height="14" viewBox="0 0 14 14">
+      <line x1="4" y1="13" x2="13" y2="4" stroke="#d5a350" stroke-width="1.6"/>
+      <line x1="8" y1="13" x2="13" y2="8" stroke="#d5a350" stroke-width="1.6"/>
+      <line x1="11" y1="13" x2="13" y2="11" stroke="#d5a350" stroke-width="1.6"/>
+    </svg>
+  </div>
+  <!-- CLOUD UPDATE MODAL POPUP -->
+  <div id="cloudUpdateModal" style="display:none;position:absolute;inset:0;background:rgba(4,8,18,0.86);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;">
+    <div style="width:490px;background:linear-gradient(180deg,#0f172a 0%,#090d16 100%);border:2px solid #10b981;border-radius:16px;padding:22px 24px;box-shadow:0 0 42px rgba(16,185,129,0.5);color:#f8fafc;text-align:center;">
+      <div style="font-size:34px;margin-bottom:6px;">🚀</div>
+      <div id="cloudModalTitle" style="font-size:17px;font-weight:900;color:#34d399;margin-bottom:10px;letter-spacing:0.4px;">ĐANG KIỂM TRA CẬP NHẬT CLOUD...</div>
+      <div id="cloudModalDetail" style="font-size:13px;line-height:1.6;color:#cbd5e1;margin-bottom:16px;background:rgba(15,23,42,0.9);border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-align:left;">
+        Đang kết nối tới kho lưu trữ Hồng Đăng Studio:<br><b style="color:#38bdf8;">github.com/mentorlehaidang-create/hongdang-update</b>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button id="btnApplyCloudReload" style="background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);border:1px solid #fde68a;color:#ffffff;font-weight:900;font-size:13px;padding:9px 18px;border-radius:8px;cursor:pointer;box-shadow:0 0 14px rgba(245,158,11,0.5);">⚡ ÁP DỤNG & LÀM MỚI GIAO DIỆN NGAY</button>
+        <button id="btnCloseCloudModal" style="background:linear-gradient(180deg,#10b981 0%,#059669 100%);border:1px solid #6ee7b7;color:#ffffff;font-weight:800;font-size:13px;padding:9px 22px;border-radius:8px;cursor:pointer;box-shadow:0 0 14px rgba(16,185,129,0.4);">ĐÓNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  const SCALE_INTERVALS = [
+    [1,0,1,0,1,1,0,1,0,1,0,1], // 0: Major
+    [1,0,1,1,0,1,0,1,1,0,1,0], // 1: Minor
+    [1,0,1,1,0,1,0,1,0,1,1,0], // 2: Dorian
+    [1,1,1,1,1,1,1,1,1,1,1,1]  // 3: Chromatic
+  ];
+
+  const state = {
+    retuneSpeed: 20,
+    flexTune: 20,
+    humanize: 35,
+    natVibrato: 0.0,
+    tracking: 50,
+    inputType: 0,
+    key: 0,
+    scale: 0,
+    autoSync: true,
+    lowLatency: true,
+    formant: 50,
+    transpose: 50,
+    detune: 440.0,
+    mix: 100,
+    hold: false,
+    classic: false,
+    preset: 0,
+    noteMask: 0,
+    notePc: 0,
+    cents: 0,
+    active: false
+  };
+
+  function emitToHost(eventName, payload) {
+    if (window.__JUCE__ && window.__JUCE__.backend) {
+      window.__JUCE__.backend.emitEvent(eventName, payload || {});
+    }
+  }
+
+  function setParam(id, value) {
+    state[id] = value;
+    emitToHost("setParam", { id, value: Number(value) });
+    renderAll();
+  }
+
+  // Build radial ticks on center pitch dial
+  (function buildDialTicks() {
+    const g = document.getElementById("dialTicks");
+    let html = "";
+    for (let i = 0; i < 36; i++) {
+      if (i === 0) continue;
+      const angle = i * 10;
+      const isMajor = (i % 3 === 0);
+      const y1 = isMajor ? 16 : 18;
+      const y2 = isMajor ? 25 : 23;
+      const col = isMajor ? "rgba(235, 198, 132, 0.55)" : "rgba(210, 172, 108, 0.25)";
+      html += `<line x1="112" y1="${y1}" x2="112" y2="${y2}" stroke="${col}" stroke-width="${isMajor ? 1.6 : 1}" transform="rotate(${angle} 112 112)"/>`;
+    }
+    g.innerHTML = html;
+  })();
+
+  // Build 6-Octave Piano Roll
+  const whiteKeyEls = [];
+  const blackKeyEls = [];
+  (function buildPiano() {
+    const container = document.getElementById("pianoContainer");
+    const whitePcs = [0, 2, 4, 5, 7, 9, 11];
+    const blackMap = [
+      { afterWhite: 0, pc: 1 },
+      { afterWhite: 1, pc: 3 },
+      { afterWhite: 3, pc: 6 },
+      { afterWhite: 4, pc: 8 },
+      { afterWhite: 5, pc: 10 }
+    ];
+    const octaves = 6;
+    const totalWhites = octaves * 7;
+
+    for (let oct = 0; oct < octaves; oct++) {
+      for (let w = 0; w < 7; w++) {
+        const pc = whitePcs[w];
+        const div = document.createElement("div");
+        div.className = "white-key";
+        div.dataset.pc = pc;
+        div.addEventListener("click", () => toggleNoteMask(pc));
+        container.appendChild(div);
+        whiteKeyEls.push(div);
+      }
+    }
+
+    for (let oct = 0; oct < octaves; oct++) {
+      for (const bm of blackMap) {
+        const whiteIdx = oct * 7 + bm.afterWhite + 1;
+        const leftPct = (whiteIdx / totalWhites) * 100;
+        const div = document.createElement("div");
+        div.className = "black-key";
+        div.style.left = `${leftPct}%`;
+        div.dataset.pc = bm.pc;
+        div.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleNoteMask(bm.pc);
+        });
+        container.appendChild(div);
+        blackKeyEls.push(div);
+      }
+    }
+  })();
+
+  function toggleNoteMask(pc) {
+    const bit = (1 << pc);
+    const nextMask = (state.noteMask ^ bit) & 0xFFF;
+    setParam("noteMask", nextMask);
+  }
+
+  function polarToCartesian(cx, cy, r, angleDeg) {
+    const rad = (angleDeg - 90) * Math.PI / 180.0;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+
+  function describeArc(cx, cy, r, startAngle, endAngle) {
+    if (Math.abs(endAngle - startAngle) < 0.1) return "";
+    const start = polarToCartesian(cx, cy, r, endAngle);
+    const end = polarToCartesian(cx, cy, r, startAngle);
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+    return ["M", start.x, start.y, "A", r, r, 0, largeArcFlag, 0, end.x, end.y].join(" ");
+  }
+
+  function renderKnobSvg(svg) {
+    const param = svg.dataset.param;
+    const min = parseFloat(svg.dataset.min);
+    const max = parseFloat(svg.dataset.max);
+    const isInverted = svg.dataset.invert === "1";
+    const val = Number(state[param] ?? min);
+    if (svg._lastVal === val) return;
+    svg._lastVal = val;
+    const rawNorm = Math.max(0, Math.min(1, (val - min) / (max - min)));
+    // For Retune Speed (inverted): left (-135 deg) = 100 (Min/Off Tune), right (+135 deg) = 0 (Max Tune)
+    const norm = isInverted ? (1.0 - rawNorm) : rawNorm;
+    const isBipolarCenter = (param === "natVibrato");
+    const isBig = svg.classList.contains("big-knob");
+
+    const endDeg = -135 + norm * 270;
+
+    if (isBig) {
+      const cx = 64, cy = 64, rArc = 54, rBody = 45;
+      const trackPath = describeArc(cx, cy, rArc, -135, 135);
+      let valPath = "";
+      if (isBipolarCenter) {
+        if (Math.abs(endDeg) > 0.5) {
+          valPath = endDeg > 0
+            ? describeArc(cx, cy, rArc, 0, endDeg)
+            : describeArc(cx, cy, rArc, endDeg, 0);
+        }
+      } else {
+        valPath = norm > 0.003 ? describeArc(cx, cy, rArc, -135, endDeg) : "";
+      }
+      const ptr = polarToCartesian(cx, cy, rBody - 6, endDeg);
+      const ctr = polarToCartesian(cx, cy, 10, endDeg);
+      let capEmblem = "";
+      const curSkin = (typeof activeSkinId !== "undefined") ? activeSkinId : "origin";
+      if (curSkin === "hellokitty") {
+        capEmblem = `<circle cx="${cx}" cy="${cy}" r="${rBody - 2}" fill="#fff0f6" stroke="#ff69b4" stroke-width="2.5"/>
+          <path d="M64,72 C55,62 47,67 55,76 L64,84 L73,76 C81,67 73,62 64,72 Z" fill="#ff69b4"/>
+          <g transform="translate(92,32) rotate(22)">
+            <ellipse cx="-7" cy="0" rx="7" ry="5" fill="#ff1493" stroke="#fff" stroke-width="1.3"/>
+            <ellipse cx="7" cy="0" rx="7" ry="5" fill="#ff1493" stroke="#fff" stroke-width="1.3"/>
+            <circle r="3.5" fill="#ffb6c1" stroke="#fff" stroke-width="1"/>
+          </g>`;
+      } else if (curSkin === "nakroth") {
+        capEmblem = `<polygon points="64,24 98,44 98,84 64,104 30,84 30,44" fill="rgba(6,21,45,0.9)" stroke="#fde047" stroke-width="2"/>`;
+      } else if (curSkin === "tulen") {
+        capEmblem = `<circle cx="${cx}" cy="${cy}" r="38" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="8 5"/>
+          <polygon points="64,32 90,78 38,78" fill="none" stroke="#fef08a" stroke-width="1.6"/>
+          <polygon points="64,96 90,50 38,50" fill="none" stroke="#38bdf8" stroke-width="1.6"/>`;
+      } else if (curSkin === "wukong" || curSkin === "lauriel" || curSkin === "florentino" || curSkin === "cyan") {
+        capEmblem = `<circle cx="${cx}" cy="${cy}" r="40" fill="none" stroke="#fde047" stroke-width="2"/>
+          <polygon points="64,28 72,56 100,64 72,72 64,100 56,72 28,64 56,56" fill="rgba(253,224,71,0.18)" stroke="var(--gold-bright)" stroke-width="1.5"/>`;
+      } else if (curSkin !== "origin") {
+        capEmblem = `<circle cx="${cx}" cy="${cy}" r="38" fill="none" stroke="var(--gold-bright)" stroke-width="1.8" stroke-dasharray="6 4"/>`;
+      }
+      svg.innerHTML = `
+        <defs>
+          <radialGradient id="goldCap_${param}" cx="35%" cy="28%" r="70%">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="55%" stop-color="#1e293b"/>
+            <stop offset="100%" stop-color="#090d16"/>
+          </radialGradient>
+        </defs>
+        <circle cx="${cx}" cy="${cy}" r="${rBody + 5}" fill="#090d16" stroke="rgba(148,163,184,0.18)" stroke-width="1.5"/>
+        <path d="${trackPath}" fill="none" stroke="#1e293b" stroke-width="4.4" stroke-linecap="round"/>
+        ${valPath ? `<path d="${valPath}" fill="none" stroke="var(--gold-bright)" stroke-width="4.8" stroke-linecap="round" filter="drop-shadow(0 0 6px var(--gold-bright))"/>` : ""}
+        <circle cx="${cx}" cy="${cy}" r="${rBody}" fill="url(#goldCap_${param})" stroke="#475569" stroke-width="2"/>
+        ${capEmblem}
+        <line x1="${ctr.x}" y1="${ctr.y}" x2="${ptr.x}" y2="${ptr.y}" stroke="var(--gold-bright)" stroke-width="2.8" stroke-linecap="round"/>
+      `;
+    } else {
+      const cx = 20, cy = 20, rArc = 16, rBody = 11.5;
+      const trackPath = describeArc(cx, cy, rArc, -135, 135);
+      const valPath = norm > 0.003 ? describeArc(cx, cy, rArc, -135, endDeg) : "";
+      const ptr = polarToCartesian(cx, cy, rBody - 2, endDeg);
+      const ctr = polarToCartesian(cx, cy, 3, endDeg);
+      svg.innerHTML = `
+        <path d="${trackPath}" fill="none" stroke="#1e293b" stroke-width="3.2" stroke-linecap="round"/>
+        ${valPath ? `<path d="${valPath}" fill="none" stroke="var(--gold-bright)" stroke-width="3.5" stroke-linecap="round"/>` : ""}
+        <circle cx="${cx}" cy="${cy}" r="${rBody}" fill="#1e293b" stroke="#475569" stroke-width="1.4"/>
+        <line x1="${ctr.x}" y1="${ctr.y}" x2="${ptr.x}" y2="${ptr.y}" stroke="var(--gold-bright)" stroke-width="2.2" stroke-linecap="round"/>
+      `;
+    }
+  }
+
+  // Interactive Drag for All Knobs
+  document.querySelectorAll(".knob-svg").forEach(svg => {
+    let dragging = false;
+    let startY = 0;
+    let startVal = 0;
+    const param = svg.dataset.param;
+    const min = parseFloat(svg.dataset.min);
+    const max = parseFloat(svg.dataset.max);
+    const step = parseFloat(svg.dataset.step || "1");
+    const isInverted = svg.dataset.invert === "1";
+    const dirSign = isInverted ? -1 : 1;
+
+    svg.addEventListener("pointerdown", e => {
+      dragging = true;
+      startY = e.clientY;
+      startVal = Number(state[param] ?? min);
+      svg.setPointerCapture(e.pointerId);
+    });
+    svg.addEventListener("pointermove", e => {
+      if (!dragging) return;
+      const dy = (startY - e.clientY) * dirSign;
+      const delta = (dy / 160) * (max - min);
+      let next = Math.max(min, Math.min(max, startVal + delta));
+      next = Number((Math.round(next / step) * step).toFixed(2));
+      setParam(param, next);
+    });
+    svg.addEventListener("pointerup", e => {
+      dragging = false;
+      try { svg.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+    svg.addEventListener("dblclick", () => {
+      if (param === "natVibrato") setParam(param, 0.0);
+      else if (param === "detune") setParam(param, 440.0);
+      else if (param === "retuneSpeed") setParam(param, 20);
+      else if (param === "flexTune") setParam(param, 20);
+      else if (param === "humanize") setParam(param, 35);
+      else if (param === "mix") setParam(param, 100);
+      else setParam(param, 50);
+    });
+    svg.addEventListener("wheel", e => {
+      e.preventDefault();
+      const dir = (e.deltaY < 0 ? 1 : -1) * dirSign;
+      const cur = Number(state[param] ?? min);
+      let next = Math.max(min, Math.min(max, cur + dir * step));
+      next = Number((Math.round(next / step) * step).toFixed(2));
+      setParam(param, next);
+    }, { passive: false });
+  });
+
+  // Wire Dropdowns & Checkboxes
+  ["inputType", "key", "scale"].forEach(id => {
+    const el = document.getElementById("sel-" + id);
+    el.addEventListener("change", () => setParam(id, parseInt(el.value, 10)));
+  });
+
+  function wireToggle(id) {
+    const el = document.getElementById("chk-" + id);
+    el.addEventListener("click", () => {
+      setParam(id, !state[id] ? 1 : 0);
+    });
+  }
+  ["autoSync", "lowLatency", "hold", "classic"].forEach(wireToggle);
+
+  const btnResetDefault = document.getElementById("btnResetDefault");
+  if (btnResetDefault) {
+    btnResetDefault.addEventListener("click", () => {
+      state.retuneSpeed = 25;
+      state.flexTune = 20;
+      state.humanize = 35;
+      state.natVibrato = 1;
+      state.tracking = 50;
+      state.formant = 50;
+      state.transpose = 50;
+      state.detune = 50;
+      state.mix = 100;
+      state.hold = false;
+      state.classic = false;
+      state.noteMask = 0;
+      emitToHost("resetDefault", {});
+      renderAll();
+    });
+  }
+
+  function clamp0to100(v) {
+    return Math.max(0, Math.min(100, Math.round(Number(v) ?? 0)));
+  }
+
+  function clamp1to100(v) {
+    return Math.max(1, Math.min(100, Math.round(Number(v) || 1)));
+  }
+
+  function formatNatVibrato(v) {
+    const num = Math.max(-12.0, Math.min(12.0, Math.round((Number(v) || 0) * 10) / 10));
+    if (Math.abs(num) < 0.05) return "00";
+    return (num > 0 ? "+" : "") + num.toFixed(1);
+  }
+
+  function formatDetuneHz(v) {
+    const raw = Number(v);
+    const hz = (raw >= 300) ? Math.max(415.0, Math.min(465.0, raw)) : 440.0;
+    return hz.toFixed(1) + "Hz";
+  }
+
+  function renderAll() {
+    document.querySelectorAll(".knob-svg").forEach(renderKnobSvg);
+
+    document.getElementById("val-retuneSpeed").textContent = clamp0to100(state.retuneSpeed);
+    document.getElementById("val-flexTune").textContent = clamp1to100(state.flexTune);
+    document.getElementById("val-humanize").textContent = clamp1to100(state.humanize);
+    document.getElementById("val-natVibrato").textContent = formatNatVibrato(state.natVibrato);
+    document.getElementById("val-tracking").textContent = clamp1to100(state.tracking);
+    document.getElementById("val-formant").textContent = clamp1to100(state.formant);
+    document.getElementById("val-transpose").textContent = clamp1to100(state.transpose);
+    document.getElementById("val-detune").textContent = formatDetuneHz(state.detune);
+    document.getElementById("val-mix").textContent = clamp1to100(state.mix);
+
+    document.getElementById("sel-inputType").value = String(state.inputType);
+    document.getElementById("sel-key").value = String(state.key);
+    document.getElementById("sel-scale").value = String(state.scale);
+
+    document.getElementById("chk-autoSync").classList.toggle("active", !!state.autoSync);
+    document.getElementById("chk-lowLatency").classList.toggle("active", !!state.lowLatency);
+    document.getElementById("chk-hold").classList.toggle("active", !!state.hold);
+    document.getElementById("chk-classic").classList.toggle("active", !!state.classic);
+
+    const keyName = KEY_NAMES[state.key] || "C";
+
+    // Center Pitch Note & Cents
+    const dispNote = state.active ? (KEY_NAMES[state.notePc] || keyName) : keyName;
+    document.getElementById("centerNoteName").textContent = dispNote;
+    const c = Math.round(state.active ? state.cents : 0);
+    document.getElementById("centerCentsText").textContent = `${c >= 0 ? "+" : ""}${c} cents`;
+
+    const orbDeg = Math.max(-110, Math.min(110, (c / 50) * 100));
+    document.getElementById("centsOrbGroup").setAttribute("transform", `rotate(${orbDeg} 112 112)`);
+
+    // Update Piano Keyboard Highlighting
+    const scaleArr = SCALE_INTERVALS[state.scale] || SCALE_INTERVALS[0];
+    const updateKeyEl = (el) => {
+      const pc = parseInt(el.dataset.pc, 10);
+      const bypassed = (state.noteMask & (1 << pc)) !== 0;
+      const rel = ((pc - state.key) % 12 + 12) % 12;
+      const inScale = !bypassed && scaleArr[rel] === 1;
+      const isRoot = !bypassed && (pc === state.key);
+      el.classList.toggle("in-scale", inScale);
+      el.classList.toggle("root-key", isRoot);
+      el.classList.toggle("active-sung", state.active && state.notePc === pc);
+    };
+    whiteKeyEls.forEach(updateKeyEl);
+    blackKeyEls.forEach(updateKeyEl);
+  }
+
+  // Responsive Scaling & Interactive Window Resize + Pin Always-On-Top on Windows Desktop
+  let currentScalePct = 100;
+  let isPinnedTop = true;
+
+  function applyWindowScale(pct) {
+    currentScalePct = Math.max(65, Math.min(165, Math.round(pct)));
+    document.getElementById("zoomPctLabel").textContent = `${currentScalePct}%`;
+    const newW = Math.round(960 * (currentScalePct / 100));
+    const newH = Math.round(630 * (currentScalePct / 100));
+    emitToHost("resizeWindow", { width: newW, height: newH });
+  }
+
+  document.getElementById("btnZoomOut").addEventListener("click", () => {
+    applyWindowScale(currentScalePct - 10);
+    emitToHost("stepZoom", { delta: -0.10 });
+  });
+  document.getElementById("btnZoomIn").addEventListener("click", () => {
+    applyWindowScale(currentScalePct + 10);
+    emitToHost("stepZoom", { delta: 0.10 });
+  });
+  document.getElementById("zoomPctLabel").addEventListener("click", () => applyWindowScale(100));
+
+  const btnPinTop = document.getElementById("btnPinTop");
+  btnPinTop.addEventListener("click", () => {
+    isPinnedTop = !isPinnedTop;
+    btnPinTop.classList.toggle("active", isPinnedTop);
+    emitToHost("togglePin", { pinned: isPinnedTop });
+  });
+
+  // 1 Bản Mặc Định Gốc (Không hiệu ứng - 0% CPU) + 12 Skins (10 Liên Quân + Thanh Long + Hello Kitty) mỗi Skin 1 Linh Vật & Hiệu Ứng riêng biệt
+  const SKIN_PRESETS = [
+    { id: "origin",     name: "🎛️ Giao Diện Gốc (Không Hiệu Ứng)", creature: "none",             effect: "bars",         portal: "none",        accent: "#00e5ff", accent2: "#38bdf8", sub: "#6366f1", bg1: "#0e1626", bg2: "#070b14" },
+    { id: "cyan",       name: "🐉 Thanh Long (Rồng & Mây)",        creature: "dragon",           effect: "clouds",       portal: "bagua",       accent: "#00e5ff", accent2: "#38bdf8", sub: "#6366f1", bg1: "#0e1626", bg2: "#070b14" },
+    { id: "nakroth",    name: "⚔️ Nakroth (Bạch Hổ Cyber)",        creature: "cyber_tiger",      effect: "cyber_grid",   portal: "hex",         accent: "#00f0ff", accent2: "#fde047", sub: "#3b82f6", bg1: "#0c1938", bg2: "#060c1d" },
+    { id: "tulen",      name: "⚡ Tulen (Đại Bàng Sấm Sét)",       creature: "thunderbird",      effect: "lightning",    portal: "gear",        accent: "#fbbf24", accent2: "#fef08a", sub: "#ea580c", bg1: "#261b08", bg2: "#130d04" },
+    { id: "lauriel",    name: "🪽 Lauriel (Phượng Hoàng)",         creature: "phoenix",          effect: "aurora",       portal: "halo",        accent: "#e879f9", accent2: "#f0abfc", sub: "#9333ea", bg1: "#230d38", bg2: "#11061c" },
+    { id: "wukong",     name: "🔥 Ngộ Không (Kim Hầu Lửa)",        creature: "monkey_king",      effect: "fire",         portal: "golden_hoop", accent: "#ff8c00", accent2: "#fde047", sub: "#ef4444", bg1: "#291206", bg2: "#140802" },
+    { id: "violet_lq",  name: "🩸 Violet (Huyết Dơi Ác Quỷ)",      creature: "blood_bat",        effect: "blood_roses",  portal: "spikes",      accent: "#ff2a5f", accent2: "#fb7185", sub: "#991b1b", bg1: "#2a0912", bg2: "#150409" },
+    { id: "murad",      name: "🌌 Murad (Cá Voi Vũ Trụ)",          creature: "cosmic_whale",     effect: "galaxy",       portal: "orbit",       accent: "#818cf8", accent2: "#38bdf8", sub: "#4f46e5", bg1: "#121336", bg2: "#08091c" },
+    { id: "telannas",   name: "🏹 Tel'Annas (Bướm Thần Ngọc)",     creature: "spirit_butterfly", effect: "forest",       portal: "floral",      accent: "#10b981", accent2: "#34d399", sub: "#0d9488", bg1: "#092622", bg2: "#041311" },
+    { id: "liliana",    name: "🦊 Liliana (Cửu Vĩ Hồ 9 Đuôi)",     creature: "nine_tails",       effect: "sakura",       portal: "moon",        accent: "#f472b6", accent2: "#c084fc", sub: "#db2777", bg1: "#280e2b", bg2: "#140616" },
+    { id: "florentino", name: "✨ Florentino (Thiên Nga Kiếm)",    creature: "astral_swan",      effect: "starlight",    portal: "crown",       accent: "#c084fc", accent2: "#fbbf24", sub: "#7e22ce", bg1: "#1d0f36", bg2: "#0e071b" },
+    { id: "raz",        name: "❄️ Raz (Sói Băng Bắc Cực)",         creature: "frost_wolf",       effect: "blizzard",     portal: "crystal",     accent: "#7dd3fc", accent2: "#f8fafc", sub: "#0284c7", bg1: "#0e2238", bg2: "#07111d" },
+    { id: "hellokitty", name: "🎀 Hello Kitty (Mèo Nơ Hồng)",      creature: "hello_kitty",      effect: "candy_hearts", portal: "bow_hearts",  accent: "#ff69b4", accent2: "#ffb6c1", sub: "#fb7185", bg1: "#331024", bg2: "#1c0713" }
+  ];
+  let activeSkinId = "origin";
+  let currentSkinConfig = SKIN_PRESETS[0];
+
+  function applyCustomColors(accent, accent2, sub, bg1, bg2) {
+    const root = document.documentElement;
+    root.style.setProperty("--gold-bright", accent);
+    root.style.setProperty("--gold-mid", accent2);
+    root.style.setProperty("--gold-dim", sub);
+    root.style.setProperty("--amber-arc", accent);
+    if (bg1 && bg2) {
+      root.style.setProperty("--bg-panel", bg1);
+      root.style.setProperty("--bg-dark", bg2);
+    }
+    const dot = document.getElementById("activeSkinDot");
+    if (dot) dot.style.background = accent;
+    document.querySelectorAll(".knob-svg").forEach(svg => { svg._lastVal = undefined; renderKnobSvg(svg); });
+  }
+
+  function buildCenterCostumeSvg(skinId) {
+    if (!skinId || skinId === "origin") return "";
+    if (skinId === "hellokitty") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-86,-68 L-108,-132 L-38,-98 Z" fill="#ffffff" stroke="#ff69b4" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M-82,-78 L-96,-118 L-48,-96 Z" fill="#ffb6c1"/>
+        <path d="M86,-68 L108,-132 L38,-98 Z" fill="#ffffff" stroke="#ff69b4" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M82,-78 L96,-118 L48,-96 Z" fill="#ffb6c1"/>
+        <g stroke="#d61f69" stroke-width="3.5" stroke-linecap="round">
+          <line x1="-102" y1="-18" x2="-142" y2="-28"/><line x1="-105" y1="2" x2="-148" y2="2"/><line x1="-102" y1="22" x2="-142" y2="32"/>
+          <line x1="102" y1="-18" x2="142" y2="-28"/><line x1="105" y1="2" x2="148" y2="2"/><line x1="102" y1="22" x2="142" y2="32"/>
+        </g>
+        <g transform="translate(68,-102) rotate(18)">
+          <path d="M0,0 C-18,-28 -46,-22 -44,2 C-42,24 -16,26 0,4 Z" fill="#ff1493" stroke="#ffffff" stroke-width="3"/>
+          <path d="M0,0 C18,-28 46,-22 44,2 C42,24 16,26 0,4 Z" fill="#ff1493" stroke="#ffffff" stroke-width="3"/>
+          <circle cx="-22" cy="0" r="6" fill="#ff85b3"/><circle cx="22" cy="0" r="6" fill="#ff85b3"/>
+          <ellipse cx="0" cy="2" rx="11" ry="13" fill="#ff69b4" stroke="#ffffff" stroke-width="3"/>
+        </g>
+        <path d="M-85,88 Q0,132 85,88" fill="none" stroke="#ff69b4" stroke-width="3" stroke-dasharray="6 6"/>
+        <path d="M0,122 C-12,108 -24,116 -12,130 L0,142 L12,130 C24,116 12,108 0,122 Z" fill="#ff1493" stroke="#ffffff" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "nakroth") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <g fill="rgba(0,240,255,0.22)" stroke="#00f0ff" stroke-width="2.2">
+          <polygon points="-102,-35 -166,-92 -142,-28 -106,-10"/>
+          <polygon points="-106,0 -168,-18 -150,24 -104,22"/>
+          <polygon points="-98,32 -152,58 -126,82 -90,52"/>
+          <polygon points="102,-35 166,-92 142,-28 106,-10"/>
+          <polygon points="106,0 168,-18 150,24 104,22"/>
+          <polygon points="98,32 152,58 126,82 90,52"/>
+        </g>
+        <polygon points="0,-96 -58,-142 -24,-102 0,-112 24,-102 58,-142" fill="#fde047" stroke="#00f0ff" stroke-width="2"/>
+        <polygon points="0,-88 -12,-118 0,-132 12,-118" fill="#00f0ff"/>
+        <polygon points="-42,98 0,128 42,98 24,106 0,116 -24,106" fill="#fde047" stroke="#00f0ff" stroke-width="1.8"/>
+      </svg>`;
+    }
+    if (skinId === "tulen") {
+      let drums = "";
+      for (let i = 0; i < 6; i++) {
+        const a = (-150 + i * 60) * Math.PI / 180;
+        const x = Math.cos(a) * 134, y = Math.sin(a) * 124;
+        drums += `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+          <circle r="15" fill="#171005" stroke="#fbbf24" stroke-width="2.8"/>
+          <polygon points="0,-10 8,5 -8,5" fill="none" stroke="#fef08a" stroke-width="1.8"/>
+          <polygon points="0,10 8,-5 -8,-5" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
+          <circle r="4" fill="#ffffff"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <circle r="130" fill="none" stroke="rgba(251,191,36,0.45)" stroke-width="2" stroke-dasharray="10 8"/>
+        ${drums}
+        <polygon points="0,-102 -32,-138 0,-124 32,-138" fill="#fbbf24" stroke="#ffffff" stroke-width="1.8"/>
+      </svg>`;
+    }
+    if (skinId === "lauriel") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <ellipse cx="0" cy="-118" rx="48" ry="12" fill="none" stroke="#fde047" stroke-width="3.5"/>
+        <polygon points="0,-138 -8,-118 0,-110 8,-118" fill="#fde047"/>
+        <g fill="rgba(240,171,252,0.28)" stroke="#fde047" stroke-width="2">
+          <path d="M-98,-32 C-148,-88 -168,-52 -136,-8 C-118,12 -102,4 -98,-12 Z"/>
+          <path d="M-102,4 C-158,-22 -172,22 -132,42 C-114,50 -102,32 -102,16 Z"/>
+          <path d="M-92,38 C-142,42 -148,82 -108,86 C-94,86 -88,62 -92,38 Z"/>
+          <path d="M98,-32 C148,-88 168,-52 136,-8 C118,12 102,4 98,-12 Z"/>
+          <path d="M102,4 C158,-22 172,22 132,42 C114,50 102,32 102,16 Z"/>
+          <path d="M92,38 C142,42 148,82 108,86 C94,86 88,62 92,38 Z"/>
+        </g>
+      </svg>`;
+    }
+    if (skinId === "wukong") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-12,-98 Q-65,-158 -135,-122 Q-85,-125 -24,-92" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M-12,-98 Q-65,-158 -135,-122" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="6 4"/>
+        <path d="M12,-98 Q65,-158 135,-122 Q85,-125 24,-92" fill="none" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M12,-98 Q65,-158 135,-122" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="6 4"/>
+        <path d="M-56,-88 Q0,-116 56,-88" fill="none" stroke="#fde047" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="0" cy="-104" r="10" fill="#ef4444" stroke="#fde047" stroke-width="3"/>
+        <g transform="translate(-132,0)">
+          <rect x="-7" y="-85" width="14" height="170" rx="6" fill="#991b1b" stroke="#fde047" stroke-width="2"/>
+          <rect x="-9" y="-88" width="18" height="26" rx="4" fill="#fde047"/>
+          <rect x="-9" y="62" width="18" height="26" rx="4" fill="#fde047"/>
+        </g>
+        <g transform="translate(132,0)">
+          <rect x="-7" y="-85" width="14" height="170" rx="6" fill="#991b1b" stroke="#fde047" stroke-width="2"/>
+          <rect x="-9" y="-88" width="18" height="26" rx="4" fill="#fde047"/>
+          <rect x="-9" y="62" width="18" height="26" rx="4" fill="#fde047"/>
+        </g>
+      </svg>`;
+    }
+    if (skinId === "violet_lq") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-98,-20 L-165,-75 L-145,-15 L-168,25 L-125,35 L-135,75 L-92,45 Z" fill="rgba(153,27,27,0.55)" stroke="#ff2a5f" stroke-width="2.4"/>
+        <path d="M98,-20 L165,-75 L145,-15 L168,25 L125,35 L135,75 L92,45 Z" fill="rgba(153,27,27,0.55)" stroke="#ff2a5f" stroke-width="2.4"/>
+        <path d="M-45,-92 Q-68,-138 -25,-128 Q-32,-105 -20,-96 Z" fill="#ff2a5f" stroke="#fb7185" stroke-width="1.8"/>
+        <path d="M45,-92 Q68,-138 25,-128 Q32,-105 20,-96 Z" fill="#ff2a5f" stroke="#fb7185" stroke-width="1.8"/>
+        <circle cx="-28" cy="108" r="12" fill="#991b1b" stroke="#ff2a5f" stroke-width="2"/>
+        <circle cx="28" cy="108" r="12" fill="#991b1b" stroke="#ff2a5f" stroke-width="2"/>
+        <circle cx="0" cy="112" r="15" fill="#e11d48" stroke="#fecdd3" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "murad") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <circle r="118" fill="none" stroke="#818cf8" stroke-width="2" stroke-dasharray="18 6"/>
+        <circle r="132" fill="none" stroke="#38bdf8" stroke-width="1.4" stroke-dasharray="4 8"/>
+        <text x="0" y="-120" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">XII</text>
+        <text x="126" y="5" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">III</text>
+        <text x="0" y="132" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">VI</text>
+        <text x="-126" y="5" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="900">IX</text>
+        <polygon points="-142,-55 -158,0 -142,55 -128,0" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" stroke-width="2"/>
+        <polygon points="142,-55 158,0 142,55 128,0" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "telannas") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <path d="M-138,-85 Q-168,0 -138,85" fill="none" stroke="#fde047" stroke-width="5" stroke-linecap="round"/>
+        <path d="M138,-85 Q168,0 138,85" fill="none" stroke="#fde047" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="-148" cy="-42" rx="12" ry="5" transform="rotate(-35 -148 -42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="-148" cy="42" rx="12" ry="5" transform="rotate(35 -148 42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="148" cy="-42" rx="12" ry="5" transform="rotate(35 148 -42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <ellipse cx="148" cy="42" rx="12" ry="5" transform="rotate(-35 148 42)" fill="#10b981" stroke="#fde047" stroke-width="1.5"/>
+        <polygon points="0,-142 -16,-110 -4,-116 0,-96 4,-116 16,-110" fill="#34d399" stroke="#fde047" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "liliana") {
+      let tails = "";
+      for (let i = -4; i <= 4; i++) {
+        const ang = i * 18;
+        tails += `<g transform="rotate(${ang})">
+          <path d="M0,-92 C-18,-128 -14,-152 0,-162 C14,-152 18,-128 0,-92 Z" fill="rgba(244,114,182,0.32)" stroke="#f472b6" stroke-width="2"/>
+          <circle cx="0" cy="-152" r="4" fill="#ffffff"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        ${tails}
+        <path d="M-76,-76 L-102,-138 L-34,-98 Z" fill="#ffffff" stroke="#f472b6" stroke-width="3.5"/>
+        <path d="M-72,-84 L-90,-124 L-44,-98 Z" fill="#f472b6"/>
+        <path d="M76,-76 L102,-138 L34,-98 Z" fill="#ffffff" stroke="#f472b6" stroke-width="3.5"/>
+        <path d="M72,-84 L90,-124 L44,-98 Z" fill="#f472b6"/>
+        <circle cx="-48" cy="-96" r="8" fill="#fde047" stroke="#991b1b" stroke-width="2"/>
+        <circle cx="48" cy="-96" r="8" fill="#fde047" stroke="#991b1b" stroke-width="2"/>
+      </svg>`;
+    }
+    if (skinId === "florentino") {
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        <line x1="-142" y1="118" x2="-74" y2="62" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="74" y1="-62" x2="142" y2="-118" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="142" y1="118" x2="74" y2="62" stroke="#fbbf24" stroke-width="3.5"/>
+        <line x1="-74" y1="-62" x2="-142" y2="-118" stroke="#fbbf24" stroke-width="3.5"/>
+        <polygon points="-42,-98 -52,-132 -22,-112 0,-142 22,-112 52,-132 42,-98" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>
+        <circle cx="0" cy="-142" r="5" fill="#c084fc"/>
+        <circle cx="0" cy="112" r="13" fill="#9333ea" stroke="#fbbf24" stroke-width="2.5"/>
+      </svg>`;
+    }
+    if (skinId === "raz") {
+      let spikes = "";
+      for (let i = 0; i < 10; i++) {
+        const ang = i * 36;
+        spikes += `<g transform="rotate(${ang})">
+          <polygon points="-14,-96 0,-138 14,-96" fill="rgba(125,211,252,0.42)" stroke="#ffffff" stroke-width="2"/>
+        </g>`;
+      }
+      return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+        ${spikes}
+        <polygon points="0,126 -36,102 0,92 36,102" fill="#38bdf8" stroke="#ffffff" stroke-width="2"/>
+      </svg>`;
+    }
+    return `<svg width="340" height="310" viewBox="-170 -155 340 310" style="overflow:visible;">
+      <path d="M-28,-96 Q-75,-145 -115,-118 Q-78,-112 -45,-88" fill="#00e5ff" stroke="#fde047" stroke-width="2.5"/>
+      <path d="M28,-96 Q75,-145 115,-118 Q78,-112 45,-88" fill="#00e5ff" stroke="#fde047" stroke-width="2.5"/>
+      <circle cx="0" cy="-116" r="12" fill="#00e5ff" stroke="#fde047" stroke-width="3"/>
+      <circle cx="0" cy="-116" r="5" fill="#ffffff"/>
+    </svg>`;
+  }
+
+  function buildStageArmorSvg(skinId) {
+    if (!skinId || skinId === "origin") return "";
+    if (skinId === "hellokitty") {
+      return `<svg width="100%" height="100%" viewBox="0 0 960 360" preserveAspectRatio="none">
+        <rect x="8" y="8" width="944" height="344" rx="16" fill="none" stroke="#ff69b4" stroke-width="2.5" stroke-dasharray="10 8"/>
+        <circle cx="28" cy="28" r="10" fill="#ff69b4"/><circle cx="932" cy="28" r="10" fill="#ff69b4"/>
+        <circle cx="28" cy="332" r="10" fill="#ff69b4"/><circle cx="932" cy="332" r="10" fill="#ff69b4"/>
+      </svg>`;
+    }
+    return `<svg width="100%" height="100%" viewBox="0 0 960 360" preserveAspectRatio="none">
+      <path d="M10,45 L10,10 L65,10" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M950,45 L950,10 L895,10" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M10,315 L10,350 L65,350" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+      <path d="M950,315 L950,350 L895,350" fill="none" stroke="var(--gold-bright)" stroke-width="3"/>
+    </svg>`;
+  }
+
+  function setPluginSkin(skinId) {
+    const p = SKIN_PRESETS.find(s => s.id === skinId) || SKIN_PRESETS[0];
+    activeSkinId = p.id;
+    currentSkinConfig = p;
+    document.body.removeAttribute("data-theme");
+    const vp = document.getElementById("viewport");
+    if (vp) vp.setAttribute("data-skin", p.id);
+    const crestEl = document.getElementById("atCostumeCrest");
+    if (crestEl) crestEl.innerHTML = buildCenterCostumeSvg(p.id);
+    const armorEl = document.getElementById("atStageArmor");
+    if (armorEl) armorEl.innerHTML = buildStageArmorSvg(p.id);
+    applyCustomColors(p.accent, p.accent2, p.sub, p.bg1, p.bg2);
+    if (p.creature === "none") {
+      const c = document.getElementById("atDragonCanvas");
+      if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height);
+    }
+    renderSkinPopover();
+    try { localStorage.setItem("hd_studio_skin_v4", JSON.stringify({ type: "preset", id: p.id })); } catch (_) {}
+  }
+
+  window.__setSkinPreset = setPluginSkin;
+
+  function renderSkinPopover() {
+    const pop = document.getElementById("skinPopover");
+    if (!pop) return;
+
+    const originSkin = SKIN_PRESETS[0];
+    const otherSkins = SKIN_PRESETS.slice(1);
+    const itemsHtml = otherSkins.map(s => `
+      <button class="skin-item-btn ${activeSkinId === s.id ? 'active' : ''}" onclick="window.__setSkinPreset('${s.id}')">
+        <span class="skin-dot" style="background: linear-gradient(135deg, ${s.accent}, ${s.sub});"></span>
+        <span>${s.name}</span>
+      </button>
+    `).join("");
+
+    pop.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:11px;font-weight:800;color:#fff;">👗 CHỌN TRANG PHỤC (SKIN) CHO PLUGIN</span>
+        <button onclick="document.getElementById('skinPopover').classList.remove('open')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;font-weight:900;">✕</button>
+      </div>
+      <button class="skin-item-btn ${activeSkinId === 'origin' ? 'active' : ''}" style="width:100%;margin-bottom:5px;justify-content:center;padding:6px;" onclick="window.__setSkinPreset('origin')">
+        <span class="skin-dot" style="background:#00e5ff;"></span>
+        <span>${originSkin.name}</span>
+      </button>
+      <div class="skin-grid">${itemsHtml}</div>
+    `;
+  }
+
+  const btnSkinMenu = document.getElementById("btnSkinMenu");
+  const skinPopover = document.getElementById("skinPopover");
+  if (btnSkinMenu && skinPopover) {
+    skinPopover.addEventListener("click", e => e.stopPropagation());
+    btnSkinMenu.addEventListener("click", e => {
+      e.stopPropagation();
+      const wasOpen = skinPopover.classList.contains("open");
+      if (!wasOpen) {
+        renderSkinPopover();
+        skinPopover.classList.add("open");
+      } else {
+        skinPopover.classList.remove("open");
+      }
+    });
+    window.addEventListener("click", () => skinPopover.classList.remove("open"));
+    try {
+      const saved = JSON.parse(localStorage.getItem("hd_studio_skin_v4") || "null");
+      if (saved && saved.type === "preset") setPluginSkin(saved.id);
+    } catch (_) {}
+  }
+
+  // Drag Window on Windows Desktop by dragging Header Bar
+  const hdrBar = document.querySelector(".header-bar");
+  if (hdrBar) {
+    hdrBar.addEventListener("mousedown", e => {
+      if (e.target.closest("button") || e.target.closest("select") || e.target.id === "zoomPctLabel") return;
+      emitToHost("startWindowDrag", {});
+    });
+  }
+
+  // Bottom-Right Corner Drag Resize
+  (function initCornerResize() {
+    const grip = document.getElementById("resizeGrip");
+    let resizing = false;
+    let startScreenX = 0;
+    let startWidth = 960;
+
+    grip.addEventListener("pointerdown", e => {
+      resizing = true;
+      startScreenX = e.screenX;
+      startWidth = window.innerWidth || 960;
+      grip.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+    });
+    grip.addEventListener("pointermove", e => {
+      if (!resizing) return;
+      const dx = e.screenX - startScreenX;
+      const targetW = Math.max(600, Math.min(1600, startWidth + dx));
+      currentScalePct = Math.round((targetW / 960) * 100);
+      document.getElementById("zoomPctLabel").textContent = `${currentScalePct}%`;
+      emitToHost("resizeWindow", { width: Math.round(targetW), height: Math.round(targetW * (630 / 960)) });
+    });
+    grip.addEventListener("pointerup", e => {
+      resizing = false;
+      try { grip.releasePointerCapture(e.pointerId); } catch (_) {}
+    });
+  })();
+
+  function fitViewport() {
+    const vp = document.getElementById("viewport");
+    const sx = window.innerWidth / 960;
+    const sy = window.innerHeight / 630;
+    const scale = Math.min(sx, sy);
+    vp.style.transform = `scale(${scale})`;
+    currentScalePct = Math.round(scale * 100);
+    const lbl = document.getElementById("zoomPctLabel");
+    if (lbl) lbl.textContent = `${currentScalePct}%`;
+  }
+  window.addEventListener("resize", fitViewport);
+  fitViewport();
+  renderAll();
+
+  // Ultra-Low-CPU Multi-Skin Creature & Portal Engine for HD TUNE (24 FPS Throttled, 0% CPU on Origin Skin)
+  (function initAutoTuneFourDragons() {
+    const canvas = document.getElementById("atDragonCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let phase = 0;
+    let dragonProgress = 0;
+    let lastTs = 0;
+
+    function hexToRgba(hex, alpha) {
+      let c = (hex || "#00e5ff").replace("#", "").trim();
+      if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+      const num = parseInt(c, 16) || 0x00e5ff;
+      return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+    }
+
+    function drawMiniHeart(x, y, size, color) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(0, size * 0.35);
+      ctx.bezierCurveTo(-size, -size * 0.4, -size * 0.5, -size, 0, -size * 0.35);
+      ctx.bezierCurveTo(size * 0.5, -size, size, -size * 0.4, 0, size * 0.35);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSkinKnobPortal(cx, cy, baseR, p, accent, accent2, accentSub, intensity, portalType) {
+      if (!portalType || portalType === "none") return;
+      ctx.save();
+      const pulse = 0.90 + 0.12 * Math.sin(p * 3.0);
+      const outerR = baseR * 1.42 * pulse;
+
+      const aura = ctx.createRadialGradient(cx, cy, baseR * 0.5, cx, cy, outerR);
+      aura.addColorStop(0, hexToRgba("#ffffff", 0.22 * intensity));
+      aura.addColorStop(0.5, hexToRgba(accent, 0.32 * intensity));
+      aura.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = accent;
+      ctx.fillStyle = accent2 || "#ffffff";
+      ctx.globalAlpha = 0.80 * intensity;
+
+      if (portalType === "hex") {
+        ctx.rotate(p * 0.6);
+        for (let l = 0; l < 2; l++) {
+          const r = baseR * (1.02 + l * 0.14);
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2 + l * 0.5;
+            if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+            else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+          }
+          ctx.closePath();
+          ctx.lineWidth = l === 0 ? 2.0 : 1.2;
+          ctx.stroke();
+        }
+      } else if (portalType === "gear") {
+        ctx.rotate(p * 0.9);
+        ctx.beginPath();
+        const teeth = 16;
+        for (let i = 0; i <= teeth * 2; i++) {
+          const a = (i / (teeth * 2)) * Math.PI * 2;
+          const r = (i % 2 === 0) ? baseR * 1.16 : baseR * 0.98;
+          if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+          else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+      } else if (portalType === "halo") {
+        ctx.rotate(-p * 0.5);
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2;
+          ctx.save();
+          ctx.rotate(a);
+          ctx.beginPath();
+          ctx.ellipse(baseR * 1.08, 0, 9, 3.2, 0.4, 0, Math.PI * 2);
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+          ctx.restore();
+        }
+      } else if (portalType === "golden_hoop") {
+        ctx.rotate(p * 0.7);
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.arc(0, 0, baseR * 1.06, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, -baseR * 1.06, 7, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (portalType === "spikes") {
+        ctx.rotate(p * 0.5);
+        ctx.beginPath();
+        for (let i = 0; i < 12; i++) {
+          const a1 = (i / 12) * Math.PI * 2;
+          const a2 = ((i + 0.5) / 12) * Math.PI * 2;
+          ctx.lineTo(Math.cos(a1) * baseR * 0.96, Math.sin(a1) * baseR * 0.96);
+          ctx.lineTo(Math.cos(a2) * baseR * 1.24, Math.sin(a2) * baseR * 1.24);
+        }
+        ctx.closePath();
+        ctx.lineWidth = 1.7;
+        ctx.stroke();
+      } else if (portalType === "orbit") {
+        for (const tilt of [-0.45, 0.45]) {
+          ctx.save();
+          ctx.rotate(tilt + p * 0.4);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, baseR * 1.25, baseR * 0.52, 0, 0, Math.PI * 2);
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          const mx = Math.cos(p * 2) * baseR * 1.25;
+          const my = Math.sin(p * 2) * baseR * 0.52;
+          ctx.beginPath();
+          ctx.arc(mx, my, 3.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      } else if (portalType === "floral") {
+        ctx.rotate(p * 0.4);
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2;
+          ctx.save();
+          ctx.rotate(a);
+          ctx.beginPath();
+          ctx.ellipse(baseR * 1.08, 0, 7, 3.5, 0.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      } else if (portalType === "moon") {
+        ctx.rotate(p * 0.5);
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.arc(0, 0, baseR * 1.06, 0.2, Math.PI * 1.6);
+        ctx.stroke();
+        for (let i = 0; i < 3; i++) {
+          const a = (i / 3) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(Math.cos(a) * baseR * 1.12, Math.sin(a) * baseR * 1.12, 3.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (portalType === "crown") {
+        ctx.rotate(p * 0.45);
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(a) * baseR * 0.95, Math.sin(a) * baseR * 0.95);
+          ctx.lineTo(Math.cos(a) * baseR * 1.24, Math.sin(a) * baseR * 1.24);
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+        }
+      } else if (portalType === "crystal") {
+        ctx.rotate(p * 0.5);
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(a) * baseR * 0.9, Math.sin(a) * baseR * 0.9);
+          ctx.lineTo(Math.cos(a) * baseR * 1.16, Math.sin(a) * baseR * 1.16);
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+        }
+      } else if (portalType === "bow_hearts") {
+        ctx.setLineDash([5, 6]);
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(0, 0, baseR * 1.06, p * 0.4, p * 0.4 + Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.save();
+        ctx.translate(baseR * 0.68, -baseR * 0.68);
+        ctx.rotate(0.35);
+        ctx.fillStyle = "#ff1493";
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.4;
+        for (const s of [-1, 1]) {
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.quadraticCurveTo(s * 11, -8, s * 11, 0);
+          ctx.quadraticCurveTo(s * 11, 8, 0, 0);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffb6c1";
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      } else {
+        ctx.rotate(p * 0.7);
+        for (let r = 0; r < 10; r++) {
+          const ang = (r / 10) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(ang) * baseR * 0.92, Math.sin(ang) * baseR * 0.92);
+          ctx.lineTo(Math.cos(ang) * baseR * 1.16, Math.sin(ang) * baseR * 1.16);
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+        }
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.arc(0, 0, baseR * 1.02, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function getKnobToCenterPathPoint(u, kx, ky, centerCx, centerCy, orbitR, entryAngle, sweepDir, p) {
+      const clampedU = Math.max(0, Math.min(1, u));
+      const entryX = centerCx + orbitR * Math.cos(entryAngle);
+      const entryY = centerCy + orbitR * Math.sin(entryAngle);
+
+      if (clampedU < 0.45) {
+        const t = clampedU / 0.45;
+        const ease = t * t * (3 - 2 * t);
+        const dx = entryX - kx;
+        const dy = entryY - ky;
+        const len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len;
+        const ny = dx / len;
+        const arch = Math.sin(t * Math.PI) * 24 * sweepDir;
+        return { x: kx + dx * ease + nx * arch, y: ky + dy * ease + ny * arch };
+      } else if (clampedU < 0.85) {
+        const t = (clampedU - 0.45) / 0.40;
+        const angle = entryAngle + sweepDir * t * (Math.PI * 1.15);
+        return { x: centerCx + orbitR * Math.cos(angle), y: centerCy + orbitR * Math.sin(angle) };
+      } else {
+        const t = (clampedU - 0.85) / 0.15;
+        const endAngle = entryAngle + sweepDir * (Math.PI * 1.15 + t * 0.65);
+        const r = orbitR * (1 - t * 0.72);
+        return { x: centerCx + r * Math.cos(endAngle), y: centerCy + r * Math.sin(endAngle) };
+      }
+    }
+
+    function drawSkinCreature(pts, p, accent, accent2, accentSub, scaleMul, creatureType) {
+      if (!pts || pts.length < 3 || !creatureType || creatureType === "none") return;
+      const head = pts[0];
+      const flap = Math.sin(p * 5.2);
+
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      if (creatureType === "hello_kitty") {
+        for (let i = pts.length - 1; i >= 1; i -= 2) {
+          const pt = pts[i];
+          const sz = (1 - pt.frac) * 7.5 * scaleMul;
+          if (i % 4 === 0) {
+            drawMiniHeart(pt.x, pt.y, sz * 1.1, i % 8 === 0 ? "#ff69b4" : "#ffb6c1");
+          } else {
+            ctx.fillStyle = "rgba(255, 182, 193, 0.55)";
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, sz * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        if (head) {
+          ctx.save();
+          ctx.translate(head.x, head.y);
+          ctx.rotate(head.ang * 0.25);
+          ctx.scale(scaleMul * 1.05, scaleMul * 1.05);
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#ff69b4";
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(-10, -8); ctx.lineTo(-13, -18); ctx.lineTo(-3, -12);
+          ctx.moveTo(10, -8);  ctx.lineTo(13, -18);  ctx.lineTo(3, -12);
+          ctx.fill(); ctx.stroke();
+          ctx.beginPath();
+          ctx.ellipse(0, 0, 14, 11.5, 0, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+          ctx.fillStyle = "#1e293b";
+          ctx.beginPath();
+          ctx.ellipse(-5.5, -1, 1.6, 2.3, 0, 0, Math.PI * 2);
+          ctx.ellipse(5.5, -1, 1.6, 2.3, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#fbbf24";
+          ctx.beginPath();
+          ctx.ellipse(0, 2.2, 2.2, 1.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#1e293b";
+          ctx.lineWidth = 1.3;
+          for (const s of [-1, 1]) {
+            for (let w = -1; w <= 1; w++) {
+              ctx.beginPath();
+              ctx.moveTo(s * 10, w * 2.5);
+              ctx.lineTo(s * 16, w * 3.5);
+              ctx.stroke();
+            }
+          }
+          ctx.translate(8, -10);
+          ctx.rotate(0.25);
+          ctx.fillStyle = "#ff1493";
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 1.2;
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.ellipse(s * 5.5, 0, 5.5, 4.0, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(0, 0, 2.6, 0, Math.PI * 2);
+          ctx.fillStyle = "#ff69b4";
+          ctx.fill(); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.restore();
+        return;
+      }
+
+      if (["thunderbird", "phoenix", "spirit_butterfly", "blood_bat", "astral_swan"].includes(creatureType)) {
+        for (let t = -1; t <= 1; t++) {
+          ctx.beginPath();
+          for (let i = 0; i < pts.length; i++) {
+            const pt = pts[i];
+            const spread = t * (4 + i * 0.55) * scaleMul;
+            const nx = -Math.sin(pt.ang);
+            const ny = Math.cos(pt.ang);
+            const tx = pt.x + nx * spread;
+            const ty = pt.y + ny * spread;
+            if (i === 0) ctx.moveTo(tx, ty);
+            else ctx.lineTo(tx, ty);
+          }
+          ctx.strokeStyle = t === 0 ? "#ffffff" : accent;
+          ctx.lineWidth = (t === 0 ? 3.2 : 1.8) * scaleMul;
+          ctx.globalAlpha = 0.85;
+          ctx.stroke();
+        }
+        if (head) {
+          ctx.save();
+          ctx.translate(head.x, head.y);
+          ctx.rotate(head.ang);
+          ctx.scale(scaleMul, scaleMul);
+          const wingSpan = 26 + flap * 9;
+          for (const s of [-1, 1]) {
+            ctx.beginPath();
+            ctx.moveTo(2, 0);
+            if (creatureType === "spirit_butterfly") {
+              ctx.bezierCurveTo(10, s * wingSpan, -12, s * (wingSpan + 6), -6, 0);
+              ctx.bezierCurveTo(-14, s * (wingSpan * 0.75), -26, s * (wingSpan * 0.5), -14, 0);
+            } else if (creatureType === "blood_bat") {
+              ctx.lineTo(6, s * wingSpan);
+              ctx.lineTo(-4, s * (wingSpan * 0.65));
+              ctx.lineTo(-12, s * (wingSpan * 0.85));
+              ctx.lineTo(-16, 0);
+            } else {
+              ctx.quadraticCurveTo(8, s * wingSpan, -14, s * (wingSpan * 1.1));
+              ctx.quadraticCurveTo(-8, s * (wingSpan * 0.45), -16, 0);
+            }
+            ctx.fillStyle = hexToRgba(accent, 0.78);
+            ctx.fill();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.moveTo(16, 0); ctx.lineTo(4, -5); ctx.lineTo(-10, 0); ctx.lineTo(4, 5);
+          ctx.closePath();
+          ctx.fillStyle = "#ffffff";
+          ctx.fill();
+          ctx.restore();
+        }
+        ctx.restore();
+        return;
+      }
+
+      if (["nine_tails", "cyber_tiger", "frost_wolf", "monkey_king", "cosmic_whale"].includes(creatureType)) {
+        const tailCount = creatureType === "nine_tails" ? 7 : 1;
+        for (let t = 0; t < tailCount; t++) {
+          const offset = (t - (tailCount - 1) / 2) * 4.5 * scaleMul;
+          ctx.beginPath();
+          for (let i = 0; i < pts.length; i++) {
+            const pt = pts[i];
+            const nx = -Math.sin(pt.ang);
+            const ny = Math.cos(pt.ang);
+            const fan = offset * pt.frac * 1.8 + Math.sin(p * 4 - i * 0.3 + t) * 2.5 * pt.frac;
+            const tx = pt.x + nx * fan;
+            const ty = pt.y + ny * fan;
+            if (i === 0) ctx.moveTo(tx, ty);
+            else ctx.lineTo(tx, ty);
+          }
+          ctx.strokeStyle = t % 2 === 0 ? accent : (accent2 || "#ffffff");
+          ctx.lineWidth = (creatureType === "nine_tails" ? 3.2 : 8.5) * scaleMul;
+          ctx.globalAlpha = 0.85;
+          ctx.stroke();
+        }
+        if (head) {
+          ctx.save();
+          ctx.translate(head.x, head.y);
+          ctx.rotate(head.ang);
+          ctx.scale(scaleMul, scaleMul);
+          if (creatureType === "cosmic_whale") {
+            ctx.fillStyle = accent;
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 18, 9, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            for (const s of [-1, 1]) {
+              ctx.beginPath();
+              ctx.moveTo(2, s * 6);
+              ctx.quadraticCurveTo(-6, s * 22, -16, s * 16);
+              ctx.closePath();
+              ctx.fill(); ctx.stroke();
+            }
+          } else if (creatureType === "monkey_king") {
+            ctx.save();
+            ctx.rotate(p * 5);
+            ctx.strokeStyle = "#fde047";
+            ctx.lineWidth = 4.0;
+            ctx.beginPath();
+            ctx.moveTo(-18, 0); ctx.lineTo(18, 0);
+            ctx.stroke();
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 3.0;
+            ctx.beginPath();
+            ctx.moveTo(-12, 0); ctx.lineTo(12, 0);
+            ctx.stroke();
+            ctx.restore();
+          } else {
+            ctx.fillStyle = accent;
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.6;
+            for (const s of [-1, 1]) {
+              ctx.beginPath();
+              ctx.moveTo(-2, s * 6);
+              ctx.lineTo(-14, s * 16);
+              ctx.lineTo(-10, s * 4);
+              ctx.closePath();
+              ctx.fill(); ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.moveTo(19, 0); ctx.lineTo(6, -8); ctx.lineTo(-9, -6); ctx.lineTo(-9, 6); ctx.lineTo(6, 8);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(4, -3.8, 1.8, 0, Math.PI * 2);
+            ctx.arc(4, 3.8, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+        ctx.restore();
+        return;
+      }
+
+      // Default Fierce Eastern Dragon (Thanh Long / Custom) - Zero Loop ShadowBlur
+      for (let i = pts.length - 1; i >= 1; i--) {
+        const p0 = pts[i];
+        const p1 = pts[i - 1];
+        const taper = Math.sin((1 - p0.frac * 0.88) * Math.PI * 0.78);
+        const radius = Math.max(1.8, 9.5 * taper * scaleMul);
+        const nx = -Math.sin(p0.ang);
+        const ny = Math.cos(p0.ang);
+
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = radius * 2.1;
+        ctx.globalAlpha = 0.28 * (1 - p0.frac * 0.6);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.strokeStyle = "#090d16";
+        ctx.lineWidth = radius * 1.2;
+        ctx.globalAlpha = 0.92;
+        ctx.stroke();
+
+        if (i % 2 === 0) {
+          ctx.beginPath();
+          ctx.arc(p0.x, p0.y, radius * 0.76, p0.ang - 1.1, p0.ang + 1.1);
+          ctx.strokeStyle = i % 4 === 0 ? "#ffffff" : accent;
+          ctx.lineWidth = 1.8 * scaleMul;
+          ctx.globalAlpha = 0.90;
+          ctx.stroke();
+
+          const spineLen = (8 + 8 * taper) * scaleMul;
+          ctx.beginPath();
+          ctx.moveTo(p0.x + nx * radius * 0.4, p0.y + ny * radius * 0.4);
+          ctx.lineTo(p0.x - Math.cos(p0.ang) * spineLen * 0.7 + nx * spineLen, p0.y - Math.sin(p0.ang) * spineLen * 0.7 + ny * spineLen);
+          ctx.lineTo(p1.x + nx * radius * 0.3, p1.y + ny * radius * 0.3);
+          ctx.fillStyle = accent;
+          ctx.globalAlpha = 0.82 * taper;
+          ctx.fill();
+        }
+
+        if (i === 6 || i === 16) {
+          const hipX = p0.x - nx * radius * 0.5;
+          const hipY = p0.y - ny * radius * 0.5;
+          const kneeX = hipX + Math.cos(p0.ang - 1.2) * 13 * scaleMul;
+          const kneeY = hipY + Math.sin(p0.ang - 1.2) * 13 * scaleMul;
+          const ankleX = kneeX + Math.cos(p0.ang + 0.3) * 10 * scaleMul;
+          const ankleY = kneeY + Math.sin(p0.ang + 0.3) * 10 * scaleMul;
+          ctx.beginPath();
+          ctx.moveTo(hipX, hipY); ctx.lineTo(kneeX, kneeY); ctx.lineTo(ankleX, ankleY);
+          ctx.strokeStyle = accent;
+          ctx.lineWidth = 2.8 * scaleMul;
+          ctx.globalAlpha = 0.92;
+          ctx.stroke();
+          for (let c = -1; c <= 1; c++) {
+            ctx.beginPath();
+            ctx.moveTo(ankleX, ankleY);
+            ctx.lineTo(ankleX + Math.cos(p0.ang + c * 0.4) * 6.5 * scaleMul, ankleY + Math.sin(p0.ang + c * 0.4) * 6.5 * scaleMul);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 1.6 * scaleMul;
+            ctx.stroke();
+          }
+        }
+      }
+
+      if (head) {
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(head.ang);
+        ctx.scale(scaleMul, scaleMul);
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.8;
+        for (const s of [-1, 1]) {
+          const waveW = Math.sin(p * 4.0 + s) * 5.5;
+          ctx.beginPath();
+          ctx.moveTo(11, s * 4);
+          ctx.bezierCurveTo(25, s * (13 + waveW), 7, s * (24 - waveW), -16, s * (28 + waveW));
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(-1, s * 5.5);
+          ctx.quadraticCurveTo(-14, s * 17, -28, s * 21);
+          ctx.lineTo(-19, s * 10.5);
+          ctx.closePath();
+          ctx.fillStyle = accent;
+          ctx.fill(); ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.moveTo(21, -2.2); ctx.lineTo(12, -8.0); ctx.lineTo(2, -12.0); ctx.lineTo(-10, -9.5);
+        ctx.lineTo(-6, 0); ctx.lineTo(-10, 9.5); ctx.lineTo(2, 12.0); ctx.lineTo(12, 8.0);
+        ctx.lineTo(21, 2.2); ctx.lineTo(14, 0);
+        ctx.closePath();
+        ctx.fillStyle = accent;
+        ctx.fill(); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(27, 0, 3.6, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    let activeKnobIdx = 0;
+    let lastProg = 0;
+
+    function stepFourDragons(ts) {
+      if (document.hidden) {
+        requestAnimationFrame(stepFourDragons);
+        return;
+      }
+      if (!currentSkinConfig || currentSkinConfig.creature === "none") {
+        if (ts - lastTs > 500) {
+          lastTs = ts;
+          ctx.clearRect(0, 0, 960, 360);
+        }
+        requestAnimationFrame(stepFourDragons);
+        return;
+      }
+      if (ts - lastTs < 42) {
+        requestAnimationFrame(stepFourDragons);
+        return;
+      }
+      lastTs = ts;
+      phase += 0.09;
+      dragonProgress = (dragonProgress + 0.008) % 1.24;
+      if (dragonProgress < lastProg) {
+        activeKnobIdx = (activeKnobIdx + 1) % 4;
+      }
+      lastProg = dragonProgress;
+
+      ctx.clearRect(0, 0, 960, 360);
+      const accent = currentSkinConfig.accent || "#00e5ff";
+      const accentMid = currentSkinConfig.accent2 || "#38bdf8";
+      const accentSub = currentSkinConfig.sub || "#6366f1";
+
+      const centerCx = 480;
+      const centerCy = 180;
+      const orbitR = 102;
+
+      const fourKnobs = [
+        { x: 106, y: 98,  entryAngle: -Math.PI * 0.78, sweepDir: 1 },
+        { x: 218, y: 266, entryAngle:  Math.PI * 0.78, sweepDir: -1 },
+        { x: 854, y: 98,  entryAngle: -Math.PI * 0.22, sweepDir: -1 },
+        { x: 742, y: 266, entryAngle:  Math.PI * 0.22, sweepDir: 1 }
+      ];
+
+      drawSkinKnobPortal(centerCx, centerCy, orbitR, phase * 0.6, accent, accentMid, accentSub, 0.55, currentSkinConfig.portal);
+
+      fourKnobs.forEach((k, idx) => {
+        const isCurrent = (idx === activeKnobIdx);
+        drawSkinKnobPortal(k.x, k.y, 44, phase * (idx % 2 === 0 ? 1 : -1) + idx, accent, accentMid, accentSub, isCurrent ? 0.85 : 0.45, currentSkinConfig.portal);
+      });
+
+      const k = fourKnobs[activeKnobIdx];
+      const headU = dragonProgress;
+      const numSegs = 22;
+      const bodySpanU = 0.20;
+      const pts = [];
+
+      for (let i = 0; i < numSegs; i++) {
+        const frac = i / (numSegs - 1);
+        const segU = headU - frac * bodySpanU;
+        if (segU < 0.0 || segU > 1.0) continue;
+        const pt = getKnobToCenterPathPoint(segU, k.x, k.y, centerCx, centerCy, orbitR, k.entryAngle, k.sweepDir, phase);
+        const ptNext = getKnobToCenterPathPoint(Math.min(1.0, segU + 0.008), k.x, k.y, centerCx, centerCy, orbitR, k.entryAngle, k.sweepDir, phase);
+        const rawAng = Math.atan2(ptNext.y - pt.y, ptNext.x - pt.x);
+        const nx = -Math.sin(rawAng);
+        const ny = Math.cos(rawAng);
+        const slither = Math.sin(phase * 4.2 - i * 0.45) * (3.0 * Math.sin(frac * Math.PI));
+        pts.push({
+          x: pt.x + nx * slither,
+          y: pt.y + ny * slither,
+          ang: rawAng,
+          idx: i,
+          frac
+        });
+      }
+
+      drawSkinCreature(pts, phase, accent, accentMid, accentSub, 0.78, currentSkinConfig.creature);
+
+      requestAnimationFrame(stepFourDragons);
+    }
+    requestAnimationFrame(stepFourDragons);
+  })();
+
+  let lastSeenCloudSeq = -1;
+  const cloudModal = document.getElementById("cloudUpdateModal");
+  const cloudModalTitle = document.getElementById("cloudModalTitle");
+  const cloudModalDetail = document.getElementById("cloudModalDetail");
+  const btnCloudUpdate = document.getElementById("btnCloudUpdate");
+  const btnCloseCloudModal = document.getElementById("btnCloseCloudModal");
+  const btnApplyCloudReload = document.getElementById("btnApplyCloudReload");
+  const hdrVersionBadge = document.getElementById("hdrVersionBadge");
+
+  function showCloudModal(title, detail, verStr) {
+    if (!cloudModal) return;
+    if (title) cloudModalTitle.textContent = title;
+    if (detail) cloudModalDetail.innerHTML = detail.replace(/\n/g, "<br>");
+    if (verStr && hdrVersionBadge) {
+      hdrVersionBadge.textContent = `✨ v${verStr} CLOUD`;
+    }
+    cloudModal.style.display = "flex";
+  }
+
+  if (btnCloseCloudModal) {
+    btnCloseCloudModal.addEventListener("click", () => {
+      cloudModal.style.display = "none";
+    });
+  }
+
+  if (btnApplyCloudReload) {
+    btnApplyCloudReload.addEventListener("click", () => {
+      btnApplyCloudReload.textContent = "⏳ ĐANG NẠP BẢN MỚI...";
+      emitToHost("reloadCloudUI", {});
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
+    });
+  }
+
+  if (btnCloudUpdate) {
+    btnCloudUpdate.addEventListener("click", async e => {
+      e.stopPropagation();
+      showCloudModal(
+        "☁ ĐANG KẾT NỐI & TẢI BẢN CẬP NHẬT CLOUD...",
+        "Đang kiểm tra phiên bản mới từ kho lưu trữ trực tuyến:<br><b style='color:#38bdf8;'>github.com/mentorlehaidang-create/hongdang-update</b>..."
+      );
+      emitToHost("checkCloudUpdate", {});
+
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/mentorlehaidang-create/hongdang-update/main/version.json?t=" + Date.now(), { cache: "no-store" });
+        if (res.ok) {
+          const j = await res.json();
+          const v = j.vst3_version || j.app_version || "2.2.0";
+          const notes = j.release_notes || "Bản cập nhật Cloud Pro mới nhất";
+          showCloudModal(
+            `🚀 ĐÃ ĐỒNG BỘ BẢN CẬP NHẬT CLOUD v${v}!`,
+            `<b>• Phiên bản mới nhất:</b> <span style="color:#34d399;font-weight:800;">v${v} CLOUD PRO</span><br>` +
+            `<b>• Kho lưu trữ:</b> github.com/mentorlehaidang-create/hongdang-update<br>` +
+            `<b>• Nội dung cập nhật:</b> ${notes}<br>` +
+            `<b>• Trạng thái:</b> Đã đồng bộ dữ liệu bài hát & giao diện trực tuyến thành công!`,
+            v
+          );
+          return;
+        }
+      } catch (_) {}
+
+      setTimeout(() => {
+        if (cloudModalTitle && cloudModalTitle.textContent.includes("ĐANG KẾT NỐI")) {
+          const v = state.cloudVersion || "2.2.0";
+          showCloudModal(
+            `✅ ĐÃ CẬP NHẬT PHẦN MỀM LÊN BẢN v${v} CLOUD PRO!`,
+            `<b>• Phiên bản hiện tại:</b> <span style="color:#34d399;font-weight:800;">v${v} CLOUD PRO</span><br>` +
+            `<b>• Kho lưu trữ:</b> github.com/mentorlehaidang-create/hongdang-update<br>` +
+            `<b>• Nội dung cập nhật:</b> Bản cập nhật v${v} Cloud Pro — Đồng bộ trực tuyến Kho Tông Bài Hát & Tự động cập nhật nóng không cần cài lại!<br>` +
+            `<b>• Hướng dẫn:</b> Nhấn nút <b>⚡ ÁP DỤNG & LÀM MỚI GIAO DIỆN NGAY</b> bên dưới để nạp giao diện mới tức thì!`,
+            v
+          );
+        }
+      }, 450);
+    });
+  }
+
+  if (window.__JUCE__ && window.__JUCE__.backend) {
+    window.__JUCE__.backend.addEventListener("init", data => {
+      Object.assign(state, data || {});
+      state.autoSync = true;
+      state.lowLatency = true;
+      emitToHost("setParam", { id: "autoSync", value: 1 });
+      emitToHost("setParam", { id: "lowLatency", value: 1 });
+      renderAll();
+    });
+    window.__JUCE__.backend.addEventListener("telemetry", data => {
+      if (!data) return;
+      Object.assign(state, data);
+      if (data.cloudVersion && hdrVersionBadge) {
+        hdrVersionBadge.textContent = `✨ v${data.cloudVersion} CLOUD`;
+      }
+      if (typeof data.cloudSeq === "number") {
+        if (lastSeenCloudSeq === -1) {
+          lastSeenCloudSeq = data.cloudSeq;
+          if (data.cloudUpdated && data.cloudTitle) {
+            showCloudModal(data.cloudTitle, data.cloudDetail, data.cloudVersion);
+          }
+        } else if (data.cloudSeq !== lastSeenCloudSeq) {
+          lastSeenCloudSeq = data.cloudSeq;
+          if (data.cloudTitle) {
+            showCloudModal(data.cloudTitle, data.cloudDetail, data.cloudVersion);
+          }
+        }
+      }
+      renderAll();
+    });
+    emitToHost("ready", {});
+  }
+</script>
+</body>
+</html>
