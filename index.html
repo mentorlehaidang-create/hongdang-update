@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HỒNG ĐĂNG STUDIO | Phần Mềm Hát Live, VST3 Plugin & Khóa Học Thu Âm Mix Nhạc</title>
+  <meta name="description" content="Hồng Đăng Studio (0939.326.099) - Phần mềm HD LIVE Cubase 12-16 Pro, Cakewalk Sonar, Plugin HD TUNE & HD KEY VST3, Khóa học Thu âm Mix Master nhạc và Cài đặt Project từ xa." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/studio-pro.css" />
+</head>
+<body>
+
+  <!-- TOP BAR GỌN GÀNG, HIỆN ĐẠI -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span><span class="status-dot"></span>Hỗ trợ cài đặt từ xa UltraViewer 24/7</span>
+        <span style="color: var(--accent-cyan); font-weight: 700;">⚡ HD LIVE Cubase 16 Pro & Bộ VST3 HD TUNE / HD KEY</span>
+      </div>
+      <div class="top-bar-right">
+        <span>📞 Hotline / Zalo: <strong class="dyn-hotline" style="color: var(--accent-gold);">0939.326.099</strong></span>
+        <button class="lang-switch" onclick="openAdminModal()">⚙ Cấu Hình / QR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY HEADER PILL NAVIGATION -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo">
+        <div class="logo-emblem">HĐ</div>
+        <div class="brand-text">
+          <span class="brand-name">HỒNG ĐĂNG STUDIO</span>
+          <span class="brand-tagline">PRO AUDIO • VST3 DSP • ACADEMY</span>
+        </div>
+      </a>
+
+      <ul class="main-nav">
+        <li><a href="#software-store" class="active">Phần Mềm & Plugin</a></li>
+        <li><a href="#academy-courses">Khóa Học Mix Nhạc</a></li>
+        <li><a href="#interactive-tools">Dò Tone & Tư Vấn</a></li>
+        <li><a href="#remote-services">Cài Đặt & Thanh Toán QR</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="cart-trigger" onclick="toggleCartDrawer(true)">
+          <span>🛒 Giỏ Hàng</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <a href="https://zalo.me/0939326099" target="_blank" class="btn btn-primary btn-sm dyn-zalo-link">
+          💬 Zalo: <span class="dyn-hotline">0939.326.099</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION GỌN GÀNG, BỐ CỤC CHUẨN QUỐC TẾ -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="eyebrow-badge">
+          <span>★ INTERNATIONAL PRO AUDIO & DSP ECOSYSTEM</span>
+        </div>
+        <h1 class="hero-title">
+          Giải Pháp <span class="gradient-text">Phần Mềm Hát Live, VST3 Plugin</span> & Đào Tạo <span class="gradient-gold">Thu Âm Mix Nhạc</span>
+        </h1>
+        <p class="hero-description">
+          Hệ sinh thái độc quyền bởi <strong>HỒNG ĐĂNG STUDIO</strong>: Điều khiển <strong>HD LIVE Cubase 12–16 Pro</strong>, <strong>HD LIVE Sonar</strong>, bộ đôi <strong>Plugin HD TUNE & HD KEY VST3</strong> tự động bắt tone thời gian thực và Học viện đào tạo kỹ thuật phòng thu thực chiến.
+        </p>
+
+        <div class="hero-feature-pills">
+          <span class="hero-pill">⚡ Tự động bắt Tone 0.5s</span>
+          <span class="hero-pill">🎛 Chuẩn VST3 64-Bit</span>
+          <span class="hero-pill">🎓 Đào tạo Mix Vocal 1-Kèm-1</span>
+          <span class="hero-pill">💻 Cài đặt UltraViewer 24/7</span>
+        </div>
+
+        <div class="hero-cta-group">
+          <a href="#software-store" class="btn btn-primary">🚀 Xem Phần Mềm & Plugin</a>
+          <a href="#academy-courses" class="btn btn-gold">🎓 Khóa Học Thu Âm & Mix</a>
+          <a href="#remote-services" class="btn btn-outline">💳 Quét QR & Đặt Lịch Cài</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h4>15.000+</h4>
+            <p>Khách hàng tin dùng</p>
+          </div>
+          <div class="stat-item">
+            <h4>0.4 ms</h4>
+            <p>Độ trễ DSP VST3</p>
+          </div>
+          <div class="stat-item">
+            <h4>10.000+</h4>
+            <p>Tone bài hát chuẩn</p>
+          </div>
+          <div class="stat-item">
+            <h4>24/7</h4>
+            <p>Hỗ trợ trọn đời</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BÀN ĐIỀU KHIỂN DSP TƯƠNG TÁC -->
+      <div class="vst-console-rack">
+        <div class="rack-top-bar">
+          <div class="rack-dots"><span></span><span></span><span></span></div>
+          <div class="rack-model-title">HONG DANG DSP // HD-TUNE & HD-KEY VST3</div>
+          <span class="badge-tag badge-vst">SYNC ACTIVE</span>
+        </div>
+
+        <div class="dsp-main-screen">
+          <div class="dsp-screen-header">
+            <div class="detected-key-box">
+              <div class="key-pill" id="consoleDetectedKey">Am</div>
+              <div>
+                <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase;">Auto-Detected Key</div>
+                <div style="font-weight: 700; font-size: 0.88rem; color: #fff;" id="consoleSongStatus">A Minor (440 Hz • Ballad / Bolero)</div>
+              </div>
+            </div>
+            <div style="text-align: right; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent-green);">
+              CPU: 1.8% • 48kHz
+            </div>
+          </div>
+
+          <canvas id="dspSpectrumCanvas" class="dsp-spectrum-canvas"></canvas>
+        </div>
+
+        <div class="dsp-knobs-grid">
+          <div class="knob-card" title="Bấm để chỉnh tốc độ Auto-Tune">
+            <div class="knob-dial" style="--knob-deg: 310deg;" data-val="3 ms"></div>
+            <div class="knob-label">Retune</div>
+          </div>
+          <div class="knob-card" title="Bấm để chỉnh độ mượt tự nhiên">
+            <div class="knob-dial" style="--knob-deg: 240deg;" data-val="78%"></div>
+            <div class="knob-label">Humanize</div>
+          </div>
+          <div class="knob-card" title="Bấm để chỉnh vang Reverb">
+            <div class="knob-dial" style="--knob-deg: 210deg;" data-val="65%"></div>
+            <div class="knob-label">Reverb</div>
+          </div>
+          <div class="knob-card" title="Bấm để dịch Tone Beat">
+            <div class="knob-dial" style="--knob-deg: 180deg;" data-val="0 ST"></div>
+            <div class="knob-label">Pitch Beat</div>
+          </div>
+        </div>
+
+        <div class="audio-demo-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="demo-play-btn" id="demoPlayBtn" onclick="toggleAudioDemo()" title="Nghe thử">▶</button>
+            <div>
+              <div style="font-weight: 800; font-size: 0.84rem;">Nghe Thử Hiệu Ứng DSP</div>
+              <div style="font-size: 0.7rem; color: var(--accent-cyan);" id="audioChainStatus">
+                ON: HD KEY (Am) → HD TUNE (3ms) → Hall Reverb Pro
+              </div>
+            </div>
+          </div>
+          <div class="mode-toggle-group">
+            <button class="mode-btn" id="modeDryBtn" onclick="setDemoMode('dry')">Giọng Mộc</button>
+            <button class="mode-btn active" id="modeWetBtn" onclick="setDemoMode('wet')">Qua HD TUNE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 1: CỬA HÀNG PHẦN MỀM, VST3 PLUGIN & THIẾT BỊ (3 CỘT CÂN ĐỐI)
+       ======================================================================== -->
+  <section id="software-store" class="section-padding">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow-badge">PHẦN MỀM & PLUGIN BẢN QUYỀN</div>
+        <h2 class="section-title">Phần Mềm Hát Live & <span class="gradient-text">Bộ Plugin VST3</span></h2>
+        <p class="section-subtitle">
+          Kích hoạt bản quyền vĩnh viễn theo máy, tương thích Windows 10/11 64-bit và hỗ trợ cài đặt trực tiếp qua UltraViewer.
+        </p>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all">Tất Cả (6)</button>
+        <button class="filter-tab" data-filter="software">🎛 Phần Mềm HD LIVE</button>
+        <button class="filter-tab" data-filter="vst3">⚡ Plugin VST3 (HD TUNE / KEY)</button>
+        <button class="filter-tab" data-filter="project">🎼 Project Hát Live VIP</button>
+        <button class="filter-tab" data-filter="hardware">🎙 Thiết Bị Phòng Thu</button>
+      </div>
+
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 2: KHÓA HỌC THU ÂM, MIX & MASTER NHẠC (3 CỘT ĐỒNG ĐỀU)
+       ======================================================================== -->
+  <section id="academy-courses" class="section-padding academy-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow-badge gold">HỒNG ĐĂNG AUDIO ACADEMY</div>
+        <h2 class="section-title">Khóa Học <span class="gradient-gold">Thu Âm, Mix & Master Nhạc</span></h2>
+        <p class="section-subtitle">
+          Giáo trình thực chiến trên Cubase, Studio One, Cakewalk Sonar và bộ VST3. Cấp tài khoản học trọn đời kèm hỗ trợ sửa bài 1-1.
+        </p>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 3: TRA CỨU TONE BÀI HÁT & TƯ VẤN CẤU HÌNH TỰ ĐỘNG
+       ======================================================================== -->
+  <section id="interactive-tools" class="section-padding">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow-badge purple">TIỆN ÍCH PHÒNG THU TRỰC TUYẾN</div>
+        <h2 class="section-title">Tra Cứu <span class="gradient-text">Tone Bài Hát</span> & Chọn Gói Tự Động</h2>
+        <p class="section-subtitle">
+          Trải nghiệm kho dữ liệu Tone bài hát tích hợp trong <strong>HD LIVE Pro</strong> và nhận gợi ý giải pháp phù hợp nhất.
+        </p>
+      </div>
+
+      <div class="interactive-tools-grid">
+        <div class="tool-panel">
+          <span class="badge-tag badge-vst">KHO TONE HD LIVE PRO</span>
+          <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin: 8px 0 4px;">
+            🎵 Tra Cứu Tone Bài Hát Nhanh
+          </h3>
+          <p style="font-size: 0.84rem; color: var(--text-secondary);">
+            Nhập tên bài hát, ca sĩ hoặc tone (VD: <em>Am, Dm, Bolero, Tăng Duy Tân...</em>) để nạp thử vào HD TUNE:
+          </p>
+          <div class="search-input-wrap">
+            <input type="text" id="songSearchInput" class="studio-input" placeholder="🔍 Gõ tên bài hát hoặc ca sĩ cần tra tone..." />
+          </div>
+          <div class="song-results-box" id="songResultsBox"></div>
+        </div>
+
+        <div class="tool-panel">
+          <span class="badge-tag badge-vip">AI STUDIO ADVISOR</span>
+          <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin: 8px 0 4px;">
+            🎚 Tư Vấn Gói Phần Mềm & Khóa Học
+          </h3>
+          <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 12px;">
+            Chọn nhu cầu của bạn để hệ thống đề xuất combo tiết kiệm và hiệu quả nhất:
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap: 10px;">
+            <select id="builderGoal" class="studio-select" onchange="updateStudioRecommendation()">
+              <option value="live">🎤 Hát Live TikTok / YouTube / Thu Âm Tại Nhà</option>
+              <option value="mix">🎧 Học Thu Âm, Mix & Master Nhạc / Nghề Cài Project</option>
+            </select>
+            <select id="builderBudget" class="studio-select" onchange="updateStudioRecommendation()">
+              <option value="entry">Gói Khởi Đầu Tiết Kiệm (Dưới 2.500.000đ)</option>
+              <option value="mid" selected>Gói Chuyên Nghiệp Đầy Đủ (2.000.000đ – 3.500.000đ)</option>
+              <option value="pro">Gói Cao Cấp VIP Toàn Diện (Trên 5.000.000đ)</option>
+            </select>
+          </div>
+
+          <div id="builderRecommendationBox"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SECTION 4: DỊCH VỤ CÀI ĐẶT TỪ XA & MÃ QR TECHCOMBANK CHÍNH THỨC
+       ======================================================================== -->
+  <section id="remote-services" class="section-padding" style="background: rgba(9, 13, 22, 0.78); border-top: 1px solid var(--border-hairline);">
+    <div class="container">
+      <div class="section-header">
+        <div class="eyebrow-badge">DỊCH VỤ KỸ THUẬT & THANH TOÁN NHANH</div>
+        <h2 class="section-title">Cài Đặt Từ Xa & <span class="gradient-text">Quét Mã QR Thanh Toán</span></h2>
+        <p class="section-subtitle">
+          Kết nối trực tiếp qua <strong>UltraViewer</strong> trong 15 phút — Xử lý dứt điểm mọi vấn đề âm thanh, cài đặt Project và kích hoạt bản quyền.
+        </p>
+      </div>
+
+      <div class="services-grid" style="margin-bottom: 36px;">
+        <div class="service-card">
+          <div class="service-icon">💻</div>
+          <h3 class="product-title">Cài Đặt Project Hát Live Từ Xa</h3>
+          <p class="product-desc">
+            Cài trọn bộ Cubase 12–16 Pro hoặc Cakewalk Sonar kèm VST Plugins, cân chỉnh khớp 100% chất giọng Nam/Nữ của bạn.
+          </p>
+          <div class="product-footer">
+            <strong style="color: var(--accent-gold); font-size: 1.15rem;">500.000đ / Lần</strong>
+            <a href="#bookingFormBox" class="btn btn-outline btn-sm">Đặt Lịch Ngay</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🔧</div>
+          <h3 class="product-title">Fix Lỗi Âm Thanh & Soundcard</h3>
+          <p class="product-desc">
+            Khắc phục lỗi mất tiếng, trễ tiếng ASIO, sôi nhiễu, hú rít micro, mất tiếng trên OBS / TikTok Live Studio và lỗi VST3.
+          </p>
+          <div class="product-footer">
+            <strong style="color: var(--accent-gold); font-size: 1.15rem;">250.000đ / Ca</strong>
+            <a href="#bookingFormBox" class="btn btn-outline btn-sm">Yêu Cầu Xử Lý</a>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">🎚</div>
+          <h3 class="product-title">Mix & Master Bài Hát Chuyên Nghiệp</h3>
+          <p class="product-desc">
+            Nhận file thu âm Vocal + Beat, chỉnh phô Melodyne chi tiết từng câu chữ, Mix & Master đạt chuẩn phát hành YouTube/Spotify.
+          </p>
+          <div class="product-footer">
+            <strong style="color: var(--accent-gold); font-size: 1.15rem;">800.000đ / Bài</strong>
+            <a href="#bookingFormBox" class="btn btn-outline btn-sm">Gửi File Thu</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHỐI ĐẶT LỊCH ULTRAVIEWER + MÃ QR TECHCOMBANK LE HAI DANG -->
+      <div id="bookingFormBox" class="booking-payment-grid">
+        <div class="tool-panel">
+          <span class="badge-tag badge-vst">HỖ TRỢ TRỰC TIẾP ULTRAVIEWER</span>
+          <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin: 10px 0 6px;">
+            ⚡ Đặt Lịch Cài Đặt Từ Xa / Tư Vấn Nhanh
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 18px;">
+            Điền thông tin bên dưới hoặc nhắn trực tiếp Zalo <strong class="dyn-hotline" style="color: var(--accent-gold);">0939.326.099</strong> để được hỗ trợ ngay lập tức:
+          </p>
+          <form onsubmit="submitRemoteBooking(event)" style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <input type="text" id="bookName" class="studio-input" placeholder="Họ và tên của bạn *" required />
+            <input type="tel" id="bookPhone" class="studio-input" placeholder="Số điện thoại / Zalo *" required />
+            <input type="text" id="bookUltraId" class="studio-input" placeholder="ID & Pass UltraViewer (Nếu có)" />
+            <select id="bookServiceType" class="studio-select">
+              <option value="Cài phần mềm HD LIVE & Plugin VST3">Cài HD LIVE & Plugin HD TUNE / KEY</option>
+              <option value="Cài Project Hát Live Cubase / Sonar">Cài Project Cubase / Cakewalk Sonar</option>
+              <option value="Đăng ký Khóa học Thu âm & Mix nhạc">Đăng ký Khóa học Thu âm & Mix nhạc</option>
+              <option value="Fix lỗi âm thanh / Soundcard">Fix lỗi âm thanh / Soundcard</option>
+            </select>
+            <div style="grid-column: 1 / -1; display:flex; gap: 10px; flex-wrap:wrap; margin-top: 6px;">
+              <button type="submit" class="btn btn-primary" style="flex: 1;">
+                🚀 Gửi Yêu Cầu Cài Đặt
+              </button>
+              <a href="https://zalo.me/0939326099" target="_blank" class="btn btn-outline dyn-zalo-link">
+                💬 Nhắn Zalo 0939.326.099
+              </a>
+            </div>
+          </form>
+        </div>
+
+        <!-- THẺ QR TECHCOMBANK LE HAI DANG CHÍNH THỨC -->
+        <div class="official-qr-card">
+          <span class="badge-tag badge-hot">VIETQR NAPAS 24/7</span>
+          <h4 style="font-family: var(--font-display); font-size: 1.15rem; margin-top: 8px;">
+            TECHCOMBANK
+          </h4>
+          <div style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 800; letter-spacing: 0.04em;">
+            LE HAI DANG • 7985 2915 99
+          </div>
+
+          <div class="official-qr-frame">
+            <img src="assets/img/qr-lehaidang.jpg" alt="Mã QR Techcombank LE HAI DANG 7985 2915 99" />
+          </div>
+
+          <div style="display:flex; gap: 8px; width: 100%; justify-content:center;">
+            <button class="btn btn-outline btn-sm" onclick="copyTextToClipboard('7985291599', 'STK Techcombank')">
+              📋 Sao Chép STK: 7985 2915 99
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER GỌN GÀNG, SANG TRỌNG -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 12px;">
+            <div class="logo-emblem">HĐ</div>
+            <div class="brand-text">
+              <span class="brand-name">HỒNG ĐĂNG STUDIO</span>
+              <span class="brand-tagline">PRO AUDIO • VST3 • ACADEMY</span>
+            </div>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 0.84rem; margin-bottom: 12px;">
+            Trung tâm phát triển Phần mềm điều khiển hát live HD LIVE, Plugin xử lý giọng hát HD TUNE / HD KEY VST3 và Đào tạo Thu âm – Mix & Master nhạc.
+          </p>
+          <div style="font-size: 0.84rem; color: #e2e8f0; line-height: 1.7;">
+            <div>📞 Hotline / Zalo: <strong class="dyn-hotline" style="color: var(--accent-cyan);">0939.326.099</strong></div>
+            <div>🏦 Techcombank: <strong style="color: var(--accent-gold);">7985 2915 99</strong> (LE HAI DANG)</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Phần Mềm & Plugin</h4>
+          <ul class="footer-links">
+            <li><a href="#software-store">HD LIVE Cubase 12–16 Pro</a></li>
+            <li><a href="#software-store">HD LIVE Cakewalk Sonar</a></li>
+            <li><a href="#software-store">Plugin HD TUNE & HD KEY VST3</a></li>
+            <li><a href="#software-store">Plugin HD Vocal Studio & Pitch</a></li>
+            <li><a href="#software-store">Full Project Cubase VIP</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Khóa Học Phòng Thu</h4>
+          <ul class="footer-links">
+            <li><a href="#academy-courses">Thu Âm & Mix Vocal Quốc Tế</a></li>
+            <li><a href="#academy-courses">Đào Tạo Nghề Cài Project Live</a></li>
+            <li><a href="#academy-courses">Đào Tạo VIP 1-Kèm-1</a></li>
+            <li><a href="#interactive-tools">Tra Cứu Tone Bài Hát</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Hỗ Trợ Nhanh</h4>
+          <ul class="footer-links">
+            <li><a href="#remote-services">Cài Đặt Qua UltraViewer</a></li>
+            <li><a href="#remote-services">Fix Lỗi Soundcard & ASIO</a></li>
+            <li><a href="https://zalo.me/0939326099" target="_blank" class="dyn-zalo-link">Chat Zalo: 0939.326.099</a></li>
+            <li><a href="javascript:void(0)" onclick="openAdminModal()">Quản Trị Viên (Admin)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-hairline); padding-top: 20px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size: 0.78rem; color: var(--text-muted);">
+        <span>© 2026 HỒNG ĐĂNG STUDIO (LE HAI DANG). All rights reserved.</span>
+        <span>Hotline / Zalo: 0939.326.099 • Techcombank: 7985 2915 99</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SLIDE-OUT SHOPPING CART DRAWER -->
+  <div class="backdrop-overlay" id="backdropOverlay" onclick="toggleCartDrawer(false)"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="drawer-header">
+      <h3 style="font-family: var(--font-display); font-size: 1.15rem;">🛒 Giỏ Hàng Của Bạn</h3>
+      <button class="btn btn-outline btn-sm" onclick="toggleCartDrawer(false)">Đóng ✕</button>
+    </div>
+    <div class="drawer-body" id="cartDrawerBody"></div>
+    <div class="drawer-footer">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px;">
+        <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem;">Tổng thanh toán:</span>
+        <strong id="cartTotalValue" style="font-family: var(--font-display); font-size: 1.35rem; color: var(--accent-gold);">0đ</strong>
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="openCheckoutModal()">
+        ⚡ Quét Mã QR & Nhận Key Ngay
+      </button>
+    </div>
+  </aside>
+
+  <!-- MODAL 1: THANH TOÁN QR TECHCOMBANK (LE HAI DANG - 7985 2915 99) -->
+  <div class="studio-modal" id="checkoutModal">
+    <div class="modal-dialog">
+      <button class="modal-close" onclick="closeStudioModal('checkoutModal')">✕</button>
+      <span class="eyebrow-badge">THANH TOÁN NHANH 24/7 • VIETQR NAPAS</span>
+      <h3 style="font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px;">
+        Quét Mã QR Chuyển Khoản & Nhận Key Bản Quyền
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        Mở App Ngân hàng bất kỳ để quét mã QR bên dưới, sau đó bấm xác nhận để nhận Key & Link tải qua Zalo <strong>0939.326.099</strong>.
+      </p>
+
+      <div class="qr-checkout-grid">
+        <div class="qr-box">
+          <img id="vietQrImage" src="assets/img/qr-lehaidang.jpg" alt="Mã QR Techcombank LE HAI DANG 7985 2915 99" />
+          <button class="btn btn-outline btn-sm" style="width:100%; margin-top:8px; color:#0f172a; border-color:#cbd5e1;" onclick="copyTextToClipboard('7985291599', 'STK Techcombank')">
+            📋 Copy STK: 7985 2915 99
+          </button>
+        </div>
+
+        <div>
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-hairline); border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+            <h4 style="font-size: 0.84rem; color: var(--accent-cyan); margin-bottom: 6px;">Đơn Hàng Của Bạn:</h4>
+            <div id="checkoutOrderSummary"></div>
+            <div style="display:flex; justify-content:space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-hairline);">
+              <strong>Tổng thanh toán:</strong>
+              <strong id="checkoutTotalAmount" style="color: var(--accent-gold); font-size: 1.2rem;">0đ</strong>
+            </div>
+          </div>
+
+          <div style="font-size: 0.84rem; margin-bottom: 12px; line-height: 1.65; background: rgba(0,240,255,0.04); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-hairline);">
+            <div>🏦 Ngân hàng: <strong id="checkoutBankName">TECHCOMBANK</strong></div>
+            <div>💳 Số tài khoản: <strong id="checkoutAccountNo" style="color: var(--accent-cyan);">7985 2915 99</strong></div>
+            <div>👤 Chủ tài khoản: <strong id="checkoutAccountName">LE HAI DANG</strong></div>
+            <div>📝 Nội dung CK: <strong id="checkoutOrderCode" style="color: var(--accent-gold);">HD123456</strong></div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <input type="text" id="custName" class="studio-input" placeholder="Họ tên của bạn *" />
+            <input type="tel" id="custPhone" class="studio-input" placeholder="SĐT Zalo nhận Key *" />
+          </div>
+
+          <button class="btn btn-primary" style="width: 100%;" onclick="confirmPaymentOrder()">
+            ✅ Tôi Đã Chuyển Khoản — Nhận Mã Kích Hoạt Ngay
+          </button>
+
+          <div id="orderSuccessBox" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: LMS COURSE VIDEO PREVIEW PLAYER -->
+  <div class="studio-modal" id="coursePreviewModal">
+    <div class="modal-dialog">
+      <button class="modal-close" onclick="closeStudioModal('coursePreviewModal')">✕</button>
+      <span class="eyebrow-badge gold">HỌC VIỆN HỒNG ĐĂNG STUDIO • LMS PLAYER</span>
+      <h3 id="lmsCourseTitle" style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 12px;"></h3>
+
+      <div style="background: linear-gradient(135deg, #060913, #111a2e); border: 1px solid var(--border-cyan); border-radius: 12px; padding: 22px; text-align:center; margin-bottom: 16px;">
+        <div style="font-size: 0.72rem; color: var(--accent-cyan); font-family: var(--font-mono); margin-bottom: 6px;">
+          [VIDEO HỌC THỬ MIỄN PHÍ • CHẤT LƯỢNG 4K 60FPS + LOSSLESS AUDIO]
+        </div>
+        <h4 style="font-size: 1.05rem; margin-bottom: 12px;">
+          Quy Trình Gain Staging, Chỉnh Phô HD TUNE & Mix Vocal Sáng Mượt Trên Cubase Pro
+        </h4>
+        <button class="btn btn-primary btn-sm" onclick="toggleAudioDemo()">
+          🔊 Nghe Demo Âm Thanh Thực Hành
+        </button>
+      </div>
+
+      <div id="lmsCourseModules" style="margin-bottom: 16px;"></div>
+
+      <div style="display:flex; justify-content:flex-end; gap: 10px;">
+        <button class="btn btn-outline btn-sm" onclick="closeStudioModal('coursePreviewModal')">Đóng</button>
+        <button class="btn btn-gold btn-sm" id="lmsEnrollBtn">🎓 Đăng Ký Khóa Học Này</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ADMIN STUDIO PANEL -->
+  <div class="studio-modal" id="adminStudioModal">
+    <div class="modal-dialog" style="max-width: 560px;">
+      <button class="modal-close" onclick="closeStudioModal('adminStudioModal')">✕</button>
+      <span class="eyebrow-badge">QUẢN TRỊ VIÊN HỒNG ĐĂNG STUDIO</span>
+      <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 12px;">
+        ⚙ Cấu Hình Ngân Hàng & Liên Hệ
+      </h3>
+
+      <div style="display:flex; flex-direction:column; gap: 10px;">
+        <input type="text" id="admBankId" class="studio-input" placeholder="Mã Ngân Hàng (TCB)" />
+        <input type="text" id="admBankName" class="studio-input" placeholder="Tên Ngân Hàng (TECHCOMBANK)" />
+        <input type="text" id="admAccountNo" class="studio-input" placeholder="Số Tài Khoản (7985291599)" />
+        <input type="text" id="admAccountName" class="studio-input" placeholder="Tên Chủ Tài Khoản (LE HAI DANG)" />
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <input type="text" id="admHotline" class="studio-input" placeholder="Hotline (0939.326.099)" />
+          <input type="text" id="admZalo" class="studio-input" placeholder="Zalo (0939326099)" />
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap: 10px; margin-top: 18px;">
+        <button class="btn btn-outline btn-sm" onclick="closeStudioModal('adminStudioModal')">Hủy</button>
+        <button class="btn btn-primary btn-sm" onclick="saveAdminConfig()">💾 Lưu Cấu Hình</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING ZALO & HOTLINE (0939.326.099) -->
+  <div class="floating-support">
+    <a href="https://zalo.me/0939326099" target="_blank" class="float-btn float-zalo dyn-zalo-link">
+      💬 Zalo Hỗ Trợ: <span class="dyn-hotline">0939.326.099</span>
+    </a>
+    <a href="tel:0939326099" class="float-btn float-hotline dyn-tel-link">
+      📞 Gọi Ngay: <span class="dyn-hotline">0939.326.099</span>
+    </a>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="assets/js/studio-app.js"></script>
+</body>
+</html>

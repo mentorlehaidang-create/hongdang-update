@@ -1,0 +1,10 @@
+{
+    "app_version":  "2.2.0",
+    "vst3_version":  "2.2.0",
+    "song_db_version":  "2026.11.09.1028",
+    "app_zip_url":  "https://raw.githubusercontent.com/mentorlehaidang-create/hongdang-update/main/HD_LIVE_Update.zip",
+    "vst3_zip_url":  "https://raw.githubusercontent.com/mentorlehaidang-create/hongdang-update/main/HD_TUNE_HD_KEY_VST3.zip",
+    "song_db_url":  "https://raw.githubusercontent.com/mentorlehaidang-create/hongdang-update/main/DanhSach_Tone_BaiHat.txt",
+    "release_notes":  "Ban cap nhat v2.2.0 Cloud Pro (2026.11.09.1028): Dong bo truc tuyen Kho Tong Bai Hat \u0026 Cap nhat nong giao dien khong can cai lai!",
+    "force_restart_on_app_update":  true
+}
